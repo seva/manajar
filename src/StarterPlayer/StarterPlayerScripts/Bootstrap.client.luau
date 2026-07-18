@@ -1,4 +1,5 @@
 -- in-playtest: covered manually in Studio; no automated test infra for play mode
+warn("DIAG: Bootstrap.client starting")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -111,6 +112,8 @@ UserInputService.InputEnded:Connect(function(input, processed)
 		ClientHandler.StopFill(handler)
 	end
 end)
+
+warn("DIAG: Bootstrap.client HUD created, waiting for input")
 
 RunService.RenderStepped:Connect(function(dt)
 	ClientHandler.ProcessFillTick(handler, dt)
