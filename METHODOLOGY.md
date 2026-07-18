@@ -92,6 +92,29 @@ The metric stays meaningful because it is never the goal.
 
 ---
 
+## Headed Tests
+
+Headless tests (TDD) verify logic. Headed tests verify integration — that code actually runs in the target runtime (Roblox Studio) and produces observable effects.
+
+**Protocol:**
+1. Build the place file via `rojo build`
+2. Launch Studio with the built place: `Start-Process -FilePath RobloxStudioBeta.exe -ArgumentList "$placeFile"`
+3. Wait for Studio to load (15s)
+4. Send F5 via pyautogui: `win.activate()` → `pyautogui.press('f5')`
+5. Wait for play mode to initialize (10s)
+6. Capture Output window content (click Output tab → Ctrl+A → Ctrl+C)
+7. Take screenshot of the game viewport
+8. Assert: `PlaySoloSuccess` appears in `%LOCALAPPDATA%\Roblox\logs\*Studio*.log`
+9. Assert: diagnostic `warn()` output from bootstrap scripts appears in Output
+10. Assert: HUD elements (ScreenGui, TextLabel) are visible (screenshot or Instance check)
+11. Assert: no script errors in Output
+
+**Verification evidence:** Screenshot + Output text. Both are committed to the issue comment.
+
+**Exception:** Heated tests are run at phase boundaries, not per-commit. Phase verification requires at least one headed test run.
+
+---
+
 ## What's Excluded and Why
 
 - **Session log** — redundant with issue comments; grows noisy.

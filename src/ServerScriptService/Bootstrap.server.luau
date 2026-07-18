@@ -1,5 +1,4 @@
 -- in-playtest: covered manually in Studio; no automated test infra for play mode
-warn("DIAG: Bootstrap.server starting")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
@@ -70,8 +69,6 @@ remotes.FillJar.OnServerEvent:Connect(function(player, amount)
 		message = "Filled!",
 	})
 end)
-
-warn("DIAG: Bootstrap.server loaded, " .. tostring(#Players:GetPlayers()) .. " players")
 
 remotes.SelectTarget.OnServerEvent:Connect(function(player, targetId)
 	if typeof(targetId) ~= "string" then
