@@ -1,0 +1,45 @@
+local Feedback = require(script.Parent.Parent.Parent.src.Shared.Feedback)
+
+return function()
+	describe("Feedback.GetScaleDisplay", function()
+		it("should return display for known classifications", function()
+			local display = Feedback.GetScaleDisplay("weak")
+			expect(display).never.toEqual(nil)
+			expect(display.label).toEqual("Weak")
+
+			display = Feedback.GetScaleDisplay("very_strong")
+			expect(display.label).toEqual("Very Strong!")
+		end)
+
+		it("should return nil for unknown classification", function()
+			expect(Feedback.GetScaleDisplay("unknown")).toEqual(nil)
+		end)
+	end)
+
+	describe("Feedback.BuildSpellResultDisplay", function()
+		it("should build display for neutral spell", function()
+			local result = Feedback.BuildSpellResultDisplay("Fireball", "neutral", 1.0, 100)
+			expect(result.title).toMatch("Fireball")
+			expect(result.description).toEqual("Spell is neutral")
+			expect(#result.details).toEqual(2)
+		end)
+
+		it("should build display for strong spell", function()
+			local result = Feedback.BuildSpellResultDisplay("Zap", "strong", 1.5, 200)
+			expect(result.description).toEqual("Spell is strong")
+		end)
+	end)
+
+	describe("Feedback.BuildJarDisplay", function()
+		it("should compute fill percent and text", function()
+			local display = Feedback.BuildJarDisplay(0.5, 50, 100)
+			expect(display.fillPercent).toEqual(50)
+			expect(display.manaText).toEqual("50 / 100")
+		end)
+
+		it("should return blue color for low fill", function()
+			local display = Feedback.BuildJarDisplay(0.2, 20, 100)
+			expect(display.barColor.R < 0.5).toEqual(true)
+		end)
+	end)
+end

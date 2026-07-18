@@ -22,7 +22,8 @@
 - [x] Implement spell output sanitization
 - [x] Write mana scaling tests
 - [x] Implement mana scaling vs target strength
-- [ ] Basic visual feedback for scaling
+- [x] Write feedback tests
+- [x] Basic visual feedback for scaling
 - [ ] Verification: Core loop is playable and understandable in first 5 minutes of playtest
 
 ---
