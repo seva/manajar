@@ -42,8 +42,8 @@ Artifacts:
 - [x] Fix targeting state caching bug (found by tests)
 - [x] Rename tests/Shared/ → tests/ReplicatedStorage/
 - [x] Fix ARCHITECTURE.md structure listing
-- [ ] Write client input handler tests
-- [ ] Client input handler
+- [x] Write client input handler tests
+- [x] Client input handler
 - [ ] Playtest: core loop is understandable in 5 minutes
 - [ ] (Further tasks TBD)
 
