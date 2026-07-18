@@ -20,6 +20,28 @@ Code as documentation.
 
 ---
 
+## Project Structure
+
+```
+src/
+├── ReplicatedStorage/     # Shared modules (accessible by server + client)
+│   ├── ManaJar/
+│   ├── ManaInput/
+│   ├── Targeting/
+│   ├── SpellCaster/
+│   ├── Warding/
+│   ├── ManaScaling/
+│   ├── EffectApplier/
+│   └── Feedback/
+├── ServerScriptService/   # Server-side scripts
+│   ├── GameManager.luau   # Main game loop wiring
+│   └── SetupRemotes.luau  # RemoteEvent creation
+└── StarterPlayer/
+    └── StarterPlayerScripts/  # Client scripts (TBD)
+tests/
+└── Shared/                # Mirrors ReplicatedStorage structure
+```
+
 ## System Diagram
 
 ```

@@ -1,4 +1,4 @@
-local EffectApplier = require(script.Parent.Parent.Parent.src.Shared.EffectApplier)
+local EffectApplier = require(script.Parent.Parent.Parent.src.ReplicatedStorage.EffectApplier)
 
 return function()
 	describe("EffectApplier.ApplyEffect", function()

@@ -4,7 +4,7 @@ A Roblox game where players put mana into jars, link them to targets, and cast L
 
 ## Current Phase
 
-**Phase 1** — Core Loop Prototype ([#1](https://github.com/seva/manajar/issues/1))
+**Phase 2** — Vertical Slice ([#2](https://github.com/seva/manajar/issues/2))
 
 ## Session Start
 

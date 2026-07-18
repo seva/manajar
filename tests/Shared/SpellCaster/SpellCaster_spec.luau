@@ -1,4 +1,4 @@
-local SpellCaster = require(script.Parent.Parent.Parent.src.Shared.SpellCaster)
+local SpellCaster = require(script.Parent.Parent.Parent.src.ReplicatedStorage.SpellCaster)
 
 return function()
 	describe("SpellCaster.BuildPrompt", function()

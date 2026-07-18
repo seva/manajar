@@ -1,4 +1,4 @@
-local Feedback = require(script.Parent.Parent.Parent.src.Shared.Feedback)
+local Feedback = require(script.Parent.Parent.Parent.src.ReplicatedStorage.Feedback)
 
 return function()
 	describe("Feedback.GetScaleDisplay", function()

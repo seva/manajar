@@ -1,4 +1,4 @@
-local Warding = require(script.Parent.Parent.Parent.src.Shared.SpellCaster.Warding)
+local Warding = require(script.Parent.Parent.Parent.src.ReplicatedStorage.SpellCaster.Warding)
 
 return function()
 	describe("Warding.SanitizeSpellEffect", function()

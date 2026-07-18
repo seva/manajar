@@ -1,4 +1,4 @@
-local Targeting = require(script.Parent.Parent.Parent.src.Shared.Targeting)
+local Targeting = require(script.Parent.Parent.Parent.src.ReplicatedStorage.Targeting)
 
 return function()
 	describe("Targeting.CreateState", function()

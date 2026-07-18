@@ -1,4 +1,4 @@
-local JarSystem = require(script.Parent.Parent.Parent.src.Shared.ManaJar)
+local JarSystem = require(script.Parent.Parent.Parent.src.ReplicatedStorage.ManaJar)
 
 return function()
 	describe("JarSystem.CreateJar", function()

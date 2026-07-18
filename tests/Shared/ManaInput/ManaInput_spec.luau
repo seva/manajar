@@ -1,4 +1,4 @@
-local ManaInput = require(script.Parent.Parent.Parent.src.Shared.ManaInput)
+local ManaInput = require(script.Parent.Parent.Parent.src.ReplicatedStorage.ManaInput)
 
 return function()
 	describe("ManaInput.CreateInputHandler", function()

@@ -1,4 +1,4 @@
-local ManaScaling = require(script.Parent.Parent.Parent.src.Shared.ManaScaling)
+local ManaScaling = require(script.Parent.Parent.Parent.src.ReplicatedStorage.ManaScaling)
 
 return function()
 	describe("ManaScaling.CalculateScaleFactor", function()
