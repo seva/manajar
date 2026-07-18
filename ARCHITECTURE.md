@@ -36,10 +36,12 @@ src/
 │   ├── GameManager.luau   # Main game loop wiring
 │   └── SetupRemotes.luau  # RemoteEvent creation
 └── StarterPlayer/
-    └── StarterPlayerScripts/  # Client scripts (TBD)
+    └── StarterPlayerScripts/  # Client scripts
+        └── ClientHandler.luau # Input handling + remote event dispatch
 tests/
-├── ReplicatedStorage/     # Mirrors src/ReplicatedStorage
-└── ServerScriptService/   # Mirrors src/ServerScriptService
+├── ReplicatedStorage/                    # Mirrors src/ReplicatedStorage
+├── ServerScriptService/                  # Mirrors src/ServerScriptService
+└── StarterPlayer/StarterPlayerScripts/   # Mirrors src/StarterPlayer/StarterPlayerScripts
 ```
 
 ## System Diagram
@@ -73,6 +75,7 @@ _Last verified: 2026-07-18_
 | ManaScaling | Compute scale factor from mana vs resistance | CalculateScaleFactor, ComputeSpellEffect |
 | EffectApplier | Apply scaled effect to target | ApplyEffect(targetId, effect) |
 | Feedback | Build display data for UI | BuildSpellResultDisplay, BuildJarDisplay |
+| ClientHandler | Client-side input handling and remote dispatch | Create, StartFill, StopFill, CastSpell, SelectTarget, OnUpdateJar |
 
 _Last verified: 2026-07-18_
 
