@@ -18,3 +18,4 @@ rojo.exe
 smoke_test.luau
 studio_output.txt
 studio_error.txt
+*.png
