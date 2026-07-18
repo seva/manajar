@@ -16,7 +16,11 @@
 - [x] Implement mana input
 - [x] Write target linking tests
 - [x] Implement target linking
-- [ ] Implement LLM spell casting with structured output
+- [x] Write SpellCaster tests
+- [x] Implement LLM spell casting with structured output
+- [x] Write Warding tests
+- [x] Implement spell output sanitization
+- [ ] Write mana scaling tests
 - [ ] Implement mana scaling vs target strength
 - [ ] Basic visual feedback for scaling
 - [ ] Verification: Core loop is playable and understandable in first 5 minutes of playtest

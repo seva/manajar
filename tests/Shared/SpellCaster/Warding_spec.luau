@@ -1,0 +1,92 @@
+local Warding = require(script.Parent.Parent.Parent.src.Shared.SpellCaster.Warding)
+
+return function()
+	describe("Warding.SanitizeSpellEffect", function()
+		it("should accept a valid spell effect", function()
+			local effect = Warding.SanitizeSpellEffect({
+				spellName = "Fireball",
+				description = "A fiery ball of doom",
+				effectType = "damage",
+				baseValue = 20,
+				scaledValue = 50,
+			})
+			expect(effect).never.toEqual(nil)
+			expect(effect.spellName).toEqual("Fireball")
+		end)
+
+		it("should return nil for non-table input", function()
+			expect(Warding.SanitizeSpellEffect("not a table")).toEqual(nil)
+			expect(Warding.SanitizeSpellEffect(42)).toEqual(nil)
+			expect(Warding.SanitizeSpellEffect(nil)).toEqual(nil)
+		end)
+
+		it("should reject invalid effect types", function()
+			local effect = Warding.SanitizeSpellEffect({
+				spellName = "Bad Spell",
+				description = "Invalid type",
+				effectType = "nuke",
+				baseValue = 10,
+				scaledValue = 10,
+			})
+			expect(effect).toEqual(nil)
+		end)
+
+		it("should reject negative base values", function()
+			local effect = Warding.SanitizeSpellEffect({
+				spellName = "Bad Spell",
+				description = "Negative value",
+				effectType = "damage",
+				baseValue = -10,
+				scaledValue = 10,
+			})
+			expect(effect).toEqual(nil)
+		end)
+
+		it("should reject oversized values", function()
+			local effect = Warding.SanitizeSpellEffect({
+				spellName = "Big Spell",
+				description = "Too big",
+				effectType = "damage",
+				baseValue = 1e7,
+				scaledValue = 1e7,
+			})
+			expect(effect).toEqual(nil)
+		end)
+
+		it("should reject overly long names", function()
+			local effect = Warding.SanitizeSpellEffect({
+				spellName = string.rep("A", 101),
+				description = "Long name",
+				effectType = "damage",
+				baseValue = 10,
+				scaledValue = 10,
+			})
+			expect(effect).toEqual(nil)
+		end)
+
+		it("should accept a spell with duration", function()
+			local effect = Warding.SanitizeSpellEffect({
+				spellName = "Stun Spell",
+				description = "Stuns the target",
+				effectType = "stun",
+				baseValue = 1,
+				scaledValue = 3,
+				duration = 2.5,
+			})
+			expect(effect).never.toEqual(nil)
+			expect(effect.duration).toEqual(2.5)
+		end)
+
+		it("should reject negative duration", function()
+			local effect = Warding.SanitizeSpellEffect({
+				spellName = "Bad Spell",
+				description = "Negative duration",
+				effectType = "stun",
+				baseValue = 1,
+				scaledValue = 1,
+				duration = -1,
+			})
+			expect(effect).toEqual(nil)
+		end)
+	end)
+end
