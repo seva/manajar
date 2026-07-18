@@ -1,0 +1,107 @@
+local Targeting = require(script.Parent.Parent.Parent.src.Shared.Targeting)
+
+return function()
+	describe("Targeting.CreateState", function()
+		it("should create empty state", function()
+			local state = Targeting.CreateState()
+			expect(state.availableTargets).toEqual({})
+			expect(state.selectedTargetId).toEqual(nil)
+		end)
+	end)
+
+	describe("Targeting.RegisterTarget", function()
+		it("should register a target", function()
+			local state = Targeting.CreateState()
+			local ok = Targeting.RegisterTarget(state, { id = "goblin_1", name = "Goblin", resistance = 10 })
+			expect(ok).toEqual(true)
+			expect(state.availableTargets["goblin_1"]).never.toEqual(nil)
+		end)
+
+		it("should reject duplicate target IDs", function()
+			local state = Targeting.CreateState()
+			Targeting.RegisterTarget(state, { id = "goblin_1", name = "Goblin", resistance = 10 })
+			local ok = Targeting.RegisterTarget(state, { id = "goblin_1", name = "Goblin 2", resistance = 20 })
+			expect(ok).toEqual(false)
+		end)
+	end)
+
+	describe("Targeting.SelectTarget", function()
+		it("should select a registered target", function()
+			local state = Targeting.CreateState()
+			Targeting.RegisterTarget(state, { id = "goblin_1", name = "Goblin", resistance = 10 })
+			local ok, err = Targeting.SelectTarget(state, "goblin_1")
+			expect(ok).toEqual(true)
+			expect(err).toEqual(nil)
+			expect(state.selectedTargetId).toEqual("goblin_1")
+		end)
+
+		it("should fail to select unregistered target", function()
+			local state = Targeting.CreateState()
+			local ok, err = Targeting.SelectTarget(state, "nonexistent")
+			expect(ok).toEqual(false)
+			expect(err).toEqual("Target not found")
+		end)
+	end)
+
+	describe("Targeting.GetSelectedTarget", function()
+		it("should return the selected target", function()
+			local state = Targeting.CreateState()
+			Targeting.RegisterTarget(state, { id = "goblin_1", name = "Goblin", resistance = 10 })
+			Targeting.SelectTarget(state, "goblin_1")
+			local target = Targeting.GetSelectedTarget(state)
+			expect(target).never.toEqual(nil)
+			expect(target.id).toEqual("goblin_1")
+		end)
+
+		it("should return nil when nothing selected", function()
+			local state = Targeting.CreateState()
+			expect(Targeting.GetSelectedTarget(state)).toEqual(nil)
+		end)
+	end)
+
+	describe("Targeting.LinkJarToSelected", function()
+		it("should link jar to selected target", function()
+			local state = Targeting.CreateState()
+			Targeting.RegisterTarget(state, { id = "goblin_1", name = "Goblin", resistance = 10 })
+			Targeting.SelectTarget(state, "goblin_1")
+
+			local jar = { mana = 50, maxMana = 100, targetId = nil }
+			local jarSystem = {
+				LinkTarget = function(_, j, targetId)
+					j.targetId = targetId
+					return true
+				end,
+			}
+
+			local ok, err = Targeting.LinkJarToSelected(state, jar, jarSystem)
+			expect(ok).toEqual(true)
+			expect(err).toEqual(nil)
+			expect(jar.targetId).toEqual("goblin_1")
+		end)
+
+		it("should fail when no target selected", function()
+			local state = Targeting.CreateState()
+			local ok, err = Targeting.LinkJarToSelected(state, {}, { LinkTarget = function() return true end })
+			expect(ok).toEqual(false)
+			expect(err).toEqual("No target selected")
+		end)
+	end)
+
+	describe("Targeting.UnregisterTarget", function()
+		it("should remove a registered target", function()
+			local state = Targeting.CreateState()
+			Targeting.RegisterTarget(state, { id = "goblin_1", name = "Goblin", resistance = 10 })
+			local ok = Targeting.UnregisterTarget(state, "goblin_1")
+			expect(ok).toEqual(true)
+			expect(state.availableTargets["goblin_1"]).toEqual(nil)
+		end)
+
+		it("should clear selection if unregistered target was selected", function()
+			local state = Targeting.CreateState()
+			Targeting.RegisterTarget(state, { id = "goblin_1", name = "Goblin", resistance = 10 })
+			Targeting.SelectTarget(state, "goblin_1")
+			Targeting.UnregisterTarget(state, "goblin_1")
+			expect(state.selectedTargetId).toEqual(nil)
+		end)
+	end)
+end

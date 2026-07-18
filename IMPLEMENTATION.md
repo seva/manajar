@@ -12,10 +12,10 @@
 
 - [x] Write Mana Jar system tests
 - [x] Implement basic Mana Jar system (Create, fill, link, drain)
-- [ ] Write mana input tests
-- [ ] Implement mana input
-- [ ] Write target linking tests
-- [ ] Implement target linking
+- [x] Write mana input tests
+- [x] Implement mana input
+- [x] Write target linking tests
+- [x] Implement target linking
 - [ ] Implement LLM spell casting with structured output
 - [ ] Implement mana scaling vs target strength
 - [ ] Basic visual feedback for scaling
