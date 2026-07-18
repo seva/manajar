@@ -43,13 +43,13 @@ _Last verified: 2026-07-18_
 
 | Component | Responsibility | Key interface |
 |-----------|----------------|---------------|
-| JarSystem | Manage mana jars | CreateJar, FillJar, LinkTarget, DrainJar |
+| JarSystem | Manage mana jars | CreateJar, FillJar, LinkTarget (returns (bool, string?)), DrainJar |
 | ManaInput | Accumulate player input into mana | ProcessInput, FillJarFromInput |
-| Targeting | Register/select/link targets to jars | RegisterTarget, SelectTarget, LinkJarToSelected |
+| Targeting | Register/select/link targets to jars | RegisterTarget, SelectTarget, LinkJarToSelected (all return (bool, string?)) |
 | SpellCaster | Build prompt and call LLM | BuildPrompt, CastSpell |
-| Warding | Sanitize raw LLM output | SanitizeSpellEffect, SanitizeLLMResponse |
+| Warding | Sanitize raw LLM output | SanitizeSpellEffect, SanitizeLLMResponse(jsonDecode) |
 | ManaScaling | Compute scale factor from mana vs resistance | CalculateScaleFactor, ComputeSpellEffect |
-| EffectApplier | Apply scaled effect to target | ApplyEffect |
+| EffectApplier | Apply scaled effect to target | ApplyEffect(targetId, effect) |
 | Feedback | Build display data for UI | BuildSpellResultDisplay, BuildJarDisplay |
 
 _Last verified: 2026-07-18_

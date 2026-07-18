@@ -13,10 +13,9 @@ local EffectApplier = {}
 
 function EffectApplier.ApplyEffect(
 	targetId: string,
-	effect: Types.SpellEffect,
-	scaleFactor: number
+	effect: Types.SpellEffect
 ): EffectResult
-	local appliedValue = math.floor(effect.scaledValue * scaleFactor)
+	local appliedValue = math.floor(effect.scaledValue)
 	local result: EffectResult = {
 		targetId = targetId,
 		effectType = effect.effectType,

@@ -9,7 +9,7 @@ return function()
 				effectType = "damage",
 				baseValue = 50,
 				scaledValue = 100,
-			}, 1.0)
+			})
 			expect(result.success).toEqual(true)
 			expect(result.targetId).toEqual("goblin_1")
 			expect(result.effectType).toEqual("damage")
@@ -26,10 +26,10 @@ return function()
 				baseValue = 1,
 				scaledValue = 3,
 				duration = 2,
-			}, 1.5)
+			})
 			expect(result.success).toEqual(true)
 			expect(result.duration).toEqual(2)
-			expect(result.appliedValue).toEqual(4)
+			expect(result.appliedValue).toEqual(3)
 		end)
 	end)
 

@@ -2,6 +2,10 @@
 
 A Roblox game where players put mana into jars, link them to targets, and cast LLM-generated spells whose effects scale based on invested mana vs target resistance.
 
+## Current Phase
+
+**Phase 1** — Core Loop Prototype ([#1](https://github.com/seva/manajar/issues/1))
+
 ## Session Start
 
 1. Read `METHODOLOGY.md`

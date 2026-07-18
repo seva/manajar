@@ -20,17 +20,20 @@ function JarSystem.FillJar(jar: Types.Jar, amount: number): (boolean, number)
 	return true, filled
 end
 
-function JarSystem.LinkTarget(jar: Types.Jar, targetId: Types.TargetId): boolean
+function JarSystem.LinkTarget(jar: Types.Jar, targetId: Types.TargetId): (boolean, string?)
 	if jar.mana <= 0 then
-		return false
+		return false, "Jar is empty"
 	end
 	jar.targetId = targetId
-	return true
+	return true, nil
 end
 
-function JarSystem.ClearTarget(jar: Types.Jar): boolean
+function JarSystem.ClearTarget(jar: Types.Jar): (boolean, string?)
+	if jar.targetId == nil then
+		return false, "No target linked"
+	end
 	jar.targetId = nil
-	return true
+	return true, nil
 end
 
 function JarSystem.GetMana(jar: Types.Jar): number

@@ -49,10 +49,8 @@ function Warding.SanitizeSpellEffect(raw: any): Types.SpellEffect?
 	return effect
 end
 
-function Warding.SanitizeLLMResponse(responseBody: string): Types.SpellEffect?
-	local success, parsed = pcall(function()
-		return game:GetService("HttpService"):JSONDecode(responseBody)
-	end)
+function Warding.SanitizeLLMResponse(responseBody: string, jsonDecode: (string) -> any): Types.SpellEffect?
+	local success, parsed = pcall(jsonDecode, responseBody)
 	if not success then
 		return nil
 	end

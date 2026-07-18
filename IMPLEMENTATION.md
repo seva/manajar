@@ -4,7 +4,10 @@
 
 ## Phase 0: Discovery (Complete)
 
-[Discovery artifacts go here]
+Artifacts:
+- `docs/discovery-llm-provider.md` — LLM provider evaluation, structured output schema
+- `docs/discovery-roblox-luau.md` — Module system, Roblox services, types, Rojo
+- `docs/discovery-test-framework.md` — Test framework evaluation, structure
 
 ---
 
@@ -26,17 +29,17 @@
 - [x] Basic visual feedback for scaling
 - [x] Write EffectApplier tests
 - [x] Implement EffectApplier
-- [ ] Verification: Core loop is playable and understandable in first 5 minutes of playtest
 
 ---
 
 ## Phase 2: Vertical Slice
 
-[To be filled after Phase 1]
+- [ ] Verification: Set up Roblox Studio project, wire Phase 1 components into playable scene, playtest core loop
+- [ ] (Further tasks TBD)
 
-_Last updated: 2026-07-18_
+_Last updated: 2026-07-18_  
 
-## Project Structure
+## Project Structure (reference)
 
 ```
 src/

@@ -20,23 +20,23 @@ function Targeting.CreateState(): TargetingState
 	}
 end
 
-function Targeting.RegisterTarget(state: TargetingState, target: Target): boolean
+function Targeting.RegisterTarget(state: TargetingState, target: Target): (boolean, string?)
 	if state.availableTargets[target.id] ~= nil then
-		return false
+		return false, "Target already registered"
 	end
 	state.availableTargets[target.id] = target
-	return true
+	return true, nil
 end
 
-function Targeting.UnregisterTarget(state: TargetingState, targetId: Types.TargetId): boolean
+function Targeting.UnregisterTarget(state: TargetingState, targetId: Types.TargetId): (boolean, string?)
 	if state.availableTargets[targetId] == nil then
-		return false
+		return false, "Target not found"
 	end
 	state.availableTargets[targetId] = nil
 	if state.selectedTargetId == targetId then
 		state.selectedTargetId = nil
 	end
-	return true
+	return true, nil
 end
 
 function Targeting.SelectTarget(state: TargetingState, targetId: Types.TargetId): (boolean, string?)
