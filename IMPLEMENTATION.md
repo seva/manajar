@@ -24,6 +24,8 @@
 - [x] Implement mana scaling vs target strength
 - [x] Write feedback tests
 - [x] Basic visual feedback for scaling
+- [x] Write EffectApplier tests
+- [x] Implement EffectApplier
 - [ ] Verification: Core loop is playable and understandable in first 5 minutes of playtest
 
 ---
