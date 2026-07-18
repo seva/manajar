@@ -23,7 +23,16 @@ Code as documentation.
 ## System Diagram
 
 ```
-[Player] --> Jar (mana input) --> Link Target --> LLM Spell Generation --> Scaled Effect on Target
+[Player] --> ManaInput --> JarSystem (fill jar) --> Targeting (link target)
+                              |
+                              v
+[LLM] <-- SpellCaster (build prompt) <-- JarSystem (drain mana) + Targeting (get target)
+  |
+  v
+Warding (sanitize) --> ManaScaling (mana vs resistance) --> EffectApplier (apply to target)
+  |
+  v
+Feedback (display result to player)
 ```
 
 _Last verified: 2026-07-18_
@@ -34,10 +43,14 @@ _Last verified: 2026-07-18_
 
 | Component | Responsibility | Key interface |
 |-----------|----------------|---------------|
-| JarSystem | Manage mana jars | Create, fill, link target |
-| Targeting | Link targets to jars | SelectTarget() |
-| SpellCaster | LLM call and scaling | CastSpell(prompt, mana, target) |
-| EffectApplier | Apply scaled effect | ApplyEffect(target, effect, scale) |
+| JarSystem | Manage mana jars | CreateJar, FillJar, LinkTarget, DrainJar |
+| ManaInput | Accumulate player input into mana | ProcessInput, FillJarFromInput |
+| Targeting | Register/select/link targets to jars | RegisterTarget, SelectTarget, LinkJarToSelected |
+| SpellCaster | Build prompt and call LLM | BuildPrompt, CastSpell |
+| Warding | Sanitize raw LLM output | SanitizeSpellEffect, SanitizeLLMResponse |
+| ManaScaling | Compute scale factor from mana vs resistance | CalculateScaleFactor, ComputeSpellEffect |
+| EffectApplier | Apply scaled effect to target | ApplyEffect |
+| Feedback | Build display data for UI | BuildSpellResultDisplay, BuildJarDisplay |
 
 _Last verified: 2026-07-18_
 
@@ -47,7 +60,12 @@ _Last verified: 2026-07-18_
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| | | |
+| Scaling formula | mana / (mana + resistance) * 2 | Normalized to 1.0 when mana = resistance; intuitive range 0-2 |
+| Scale tiers | 5 tiers (weak to very_strong) | Kid-friendly feedback with clear visual distinction |
+| Effect types | limited to 5 (damage/heal/stun/buff/debuff) | Simple, covers core gameplay patterns |
+| Warding approach | type + range validation after JSON decode | Defense-in-depth: early rejection of malformed LLM output |
+| Input accumulation | time-based with fillRate multiplier | Simple hold-to-fill pattern; works with delta-time from Roblox RunService |
+| Provider model | interface-based LLMProvider | Swappable for different LLM backends; testable via mocks |
 
 _Last verified: 2026-07-18_
 

@@ -35,3 +35,30 @@
 [To be filled after Phase 1]
 
 _Last updated: 2026-07-18_
+
+## Project Structure
+
+```
+src/
+├── Shared/
+│   ├── ManaJar/init.luau        # Jar CRUD + mana management
+│   ├── ManaJar/Types.luau       # Jar type definitions
+│   ├── ManaInput/init.luau      # Input accumulation + jar filling
+│   ├── Targeting/init.luau      # Target registry + selection
+│   ├── SpellCaster/init.luau    # Prompt building + LLM provider abstraction
+│   ├── SpellCaster/Types.luau   # Spell effect type definitions
+│   ├── SpellCaster/Warding.luau # LLM output sanitization
+│   ├── ManaScaling/init.luau    # Scaling formula + classification
+│   ├── EffectApplier/init.luau  # Effect application + summaries
+│   └── Feedback/init.luau       # Display data for UI
+├── Server/                      # Server-side scripts (TBD)
+└── Client/                      # Client-side scripts (TBD)
+tests/
+└── Shared/                      # Mirrors src/Shared structure
+    ├── ManaJar/
+    ├── ManaInput/
+    ├── Targeting/
+    ├── SpellCaster/
+    ├── ManaScaling/
+    ├── EffectApplier/
+    └── Feedback/
