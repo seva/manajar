@@ -44,7 +44,7 @@ Artifacts:
 - [x] Fix ARCHITECTURE.md structure listing
 - [x] Write client input handler tests
 - [x] Client input handler
-- [ ] Playtest: core loop is understandable in 5 minutes
+- [x] Playtest: core loop is understandable in 5 minutes
 - [ ] (Further tasks TBD)
 
 _Last updated: 2026-07-18_

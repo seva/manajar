@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Types)
+local Types = require(script.Types)
 
 local DEFAULT_SYSTEM_PROMPT = [[You are a spell generation engine for a kid-friendly Roblox game.
 Given a player's spell intent, the amount of mana invested, and the target's name and resistance,

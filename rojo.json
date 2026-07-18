@@ -1,7 +1,0 @@
-{
-	"name": "ManaJar",
-	"tree": {
-		"$path": "src"
-	},
-	"servePort": 34872
-}

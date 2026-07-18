@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Parent.ManaJar.Types)
+local Types = require(script.Parent.ManaJar.Types)
 
 export type ManaInputConfig = {
 	fillRate: number,

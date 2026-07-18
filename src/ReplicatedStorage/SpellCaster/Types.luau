@@ -19,3 +19,5 @@ export type CastRequest = {
 export type LLMProvider = {
 	GenerateSpell: (request: CastRequest) -> SpellEffect?,
 }
+
+return {}

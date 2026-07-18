@@ -19,3 +19,5 @@ selectTargetEvent.Parent = remotesFolder
 local updateJarEvent = Instance.new("RemoteEvent")
 updateJarEvent.Name = "UpdateJarDisplay"
 updateJarEvent.Parent = remotesFolder
+
+return {}

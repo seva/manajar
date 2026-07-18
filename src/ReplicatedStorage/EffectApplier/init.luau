@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Parent.SpellCaster.Types)
+local Types = require(script.Parent.SpellCaster.Types)
 
 export type EffectResult = {
 	targetId: string,

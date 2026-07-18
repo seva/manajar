@@ -1,0 +1,26 @@
+{
+	"name": "ManaJar",
+	"tree": {
+		"$className": "DataModel",
+		"ReplicatedStorage": {
+			"$path": "src/ReplicatedStorage"
+		},
+		"ServerScriptService": {
+			"$path": "src/ServerScriptService"
+		},
+		"StarterPlayer": {
+			"StarterPlayerScripts": {
+				"$path": "src/StarterPlayer/StarterPlayerScripts"
+			}
+		},
+		"Workspace": {
+			"$className": "Workspace"
+		},
+		"Players": {
+			"$className": "Players"
+		},
+		"Lighting": {
+			"$className": "Lighting"
+		}
+	}
+}

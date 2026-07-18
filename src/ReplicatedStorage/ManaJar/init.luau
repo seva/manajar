@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Types)
+local Types = require(script.Types)
 
 local JarSystem = {}
 

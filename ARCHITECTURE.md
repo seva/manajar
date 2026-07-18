@@ -33,11 +33,13 @@ src/
 │   ├── EffectApplier/
 │   └── Feedback/
 ├── ServerScriptService/   # Server-side scripts
-│   ├── GameManager.luau   # Main game loop wiring
-│   └── SetupRemotes.luau  # RemoteEvent creation
+│   ├── Bootstrap.server.luau # Entry point: requires modules, wires RemoteEvents (Script)
+│   ├── GameManager.luau      # Main game loop wiring (ModuleScript)
+│   └── SetupRemotes.luau     # RemoteEvent creation (ModuleScript)
 └── StarterPlayer/
     └── StarterPlayerScripts/  # Client scripts
-        └── ClientHandler.luau # Input handling + remote event dispatch
+        ├── Bootstrap.client.luau # Entry point: input handling, ScreenGui (LocalScript)
+        └── ClientHandler.luau    # Input handling + remote event dispatch (ModuleScript)
 tests/
 ├── ReplicatedStorage/                    # Mirrors src/ReplicatedStorage
 ├── ServerScriptService/                  # Mirrors src/ServerScriptService

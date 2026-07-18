@@ -1,0 +1,20 @@
+# Project place file
+/manajar.rbxlx
+/ManaJar.rbxlx
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+
+sourcemap.json
+
+# Rojo binary
+rojo.exe
+
+# Rodeo
+.rodeo/
+
+# Temporary files
+smoke_test.luau
+studio_output.txt
+studio_error.txt
