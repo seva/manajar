@@ -10,8 +10,11 @@
 
 ## Phase 1: Core Loop Prototype
 
-- [ ] Implement basic Mana Jar system
+- [x] Write Mana Jar system tests
+- [x] Implement basic Mana Jar system (Create, fill, link, drain)
+- [ ] Write mana input tests
 - [ ] Implement mana input
+- [ ] Write target linking tests
 - [ ] Implement target linking
 - [ ] Implement LLM spell casting with structured output
 - [ ] Implement mana scaling vs target strength
