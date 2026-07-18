@@ -34,8 +34,15 @@ Artifacts:
 
 ## Phase 2: Vertical Slice ([#2](https://github.com/seva/manajar/issues/2))
 
-- [ ] Rojo config and Studio project setup
-- [ ] Server game loop wiring (GameManager, remotes)
+- [x] Write GameManager tests
+- [x] Rojo config and Studio project setup
+- [x] Write SetupRemotes tests
+- [x] Write server game loop tests
+- [x] Server game loop wiring (GameManager, remotes)
+- [x] Fix targeting state caching bug (found by tests)
+- [x] Rename tests/Shared/ → tests/ReplicatedStorage/
+- [x] Fix ARCHITECTURE.md structure listing
+- [ ] Write client input handler tests
 - [ ] Client input handler
 - [ ] Playtest: core loop is understandable in 5 minutes
 - [ ] (Further tasks TBD)

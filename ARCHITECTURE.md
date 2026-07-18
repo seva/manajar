@@ -28,8 +28,7 @@ src/
 │   ├── ManaJar/
 │   ├── ManaInput/
 │   ├── Targeting/
-│   ├── SpellCaster/
-│   ├── Warding/
+│   ├── SpellCaster/ (includes Warding.luau)
 │   ├── ManaScaling/
 │   ├── EffectApplier/
 │   └── Feedback/
@@ -39,7 +38,8 @@ src/
 └── StarterPlayer/
     └── StarterPlayerScripts/  # Client scripts (TBD)
 tests/
-└── Shared/                # Mirrors ReplicatedStorage structure
+├── ReplicatedStorage/     # Mirrors src/ReplicatedStorage
+└── ServerScriptService/   # Mirrors src/ServerScriptService
 ```
 
 ## System Diagram

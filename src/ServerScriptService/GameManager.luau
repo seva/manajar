@@ -16,10 +16,13 @@ local function GetOrCreateJar(player)
 	return playerJars[player]
 end
 
-local function GetOrCreateTargetingState(_player)
-	local state = Targeting.CreateState()
-	Targeting.RegisterTarget(state, { id = "training_dummy", name = "Training Dummy", resistance = 10 })
-	return state
+local function GetOrCreateTargetingState(player)
+	if targetingStates[player] == nil then
+		local state = Targeting.CreateState()
+		Targeting.RegisterTarget(state, { id = "training_dummy", name = "Training Dummy", resistance = 10 })
+		targetingStates[player] = state
+	end
+	return targetingStates[player]
 end
 
 local function MockLLMProvider()
