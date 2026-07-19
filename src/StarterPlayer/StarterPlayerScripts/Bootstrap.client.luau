@@ -69,10 +69,10 @@ local remoteEvents = {
 }
 
 local handler = ClientHandler.Create({
-	FillJar = { FireServer = function(...) remoteEvents.FillJar:FireServer(...) end },
-	CastSpell = { FireServer = function(...) remoteEvents.CastSpell:FireServer(...) end },
-	SelectTarget = { FireServer = function(...) remoteEvents.SelectTarget:FireServer(...) end },
-	UpdateJarDisplay = { FireServer = function(...) remoteEvents.UpdateJarDisplay:FireServer(...) end },
+	FillJar = { FireServer = function(self, amount) remoteEvents.FillJar:FireServer(amount) end },
+	CastSpell = { FireServer = function(self, intent) remoteEvents.CastSpell:FireServer(intent) end },
+	SelectTarget = { FireServer = function(self, targetId) remoteEvents.SelectTarget:FireServer(targetId) end },
+	UpdateJarDisplay = { FireServer = function(self, data) remoteEvents.UpdateJarDisplay:FireServer(data) end },
 })
 
 remoteEvents.UpdateJarDisplay.OnClientEvent:Connect(function(data)

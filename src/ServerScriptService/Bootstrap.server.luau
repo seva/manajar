@@ -46,7 +46,7 @@ remotes.CastSpell.OnServerEvent:Connect(function(player, spellIntent)
 	local result, err = GameManager.OnPlayerCastSpell(player, spellIntent)
 	if result then
 		remotes.UpdateJarDisplay:FireClient(player, {
-			message = "Spell cast: " .. tostring(result),
+			message = "Spell cast: " .. tostring(result.effectType or "unknown") .. " (" .. tostring(result.scaledValue or 0) .. ")",
 			manaText = "0 / 100",
 			fillPercent = 0,
 		})
