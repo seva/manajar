@@ -1,10 +1,11 @@
-local Targeting = require(script.Parent.Parent.Parent.src.ReplicatedStorage.Targeting)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Targeting = require(ReplicatedStorage.Targeting)
 
-return function()
+return function(describe, it, expect)
 	describe("Targeting.CreateState", function()
 		it("should create empty state", function()
 			local state = Targeting.CreateState()
-			expect(state.availableTargets).toEqual({})
+			expect(next(state.availableTargets)).toEqual(nil)
 			expect(state.selectedTargetId).toEqual(nil)
 		end)
 	end)
@@ -66,12 +67,12 @@ return function()
 			Targeting.SelectTarget(state, "goblin_1")
 
 			local jar = { mana = 50, maxMana = 100, targetId = nil }
-			local jarSystem = {
-				LinkTarget = function(_, j, targetId)
-					j.targetId = targetId
-					return true
-				end,
-			}
+		local jarSystem = {
+			LinkTarget = function(j, targetId)
+				j.targetId = targetId
+				return true
+			end,
+		}
 
 			local ok, err = Targeting.LinkJarToSelected(state, jar, jarSystem)
 			expect(ok).toEqual(true)

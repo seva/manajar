@@ -1,6 +1,7 @@
-local SpellCaster = require(script.Parent.Parent.Parent.src.ReplicatedStorage.SpellCaster)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SpellCaster = require(ReplicatedStorage.SpellCaster)
 
-return function()
+return function(describe, it, expect)
 	describe("SpellCaster.BuildPrompt", function()
 		it("should include player intent, mana, target name, and resistance", function()
 			local prompt = SpellCaster.BuildPrompt({

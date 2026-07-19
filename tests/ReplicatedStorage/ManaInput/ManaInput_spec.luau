@@ -1,6 +1,7 @@
-local ManaInput = require(script.Parent.Parent.Parent.src.ReplicatedStorage.ManaInput)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ManaInput = require(ReplicatedStorage.ManaInput)
 
-return function()
+return function(describe, it, expect)
 	describe("ManaInput.CreateInputHandler", function()
 		it("should create handler with default config", function()
 			local handler = ManaInput.CreateInputHandler()
@@ -58,12 +59,12 @@ return function()
 
 	describe("ManaInput.FillJarFromInput", function()
 		it("should fill jar from accumulated input", function()
-			local jarSystem = {
-				FillJar = function(_, jar, amount)
-					jar.mana = jar.mana + amount
-					return true, jar.mana
-				end,
-			}
+		local jarSystem = {
+			FillJar = function(jar, amount)
+				jar.mana = jar.mana + amount
+				return true, jar.mana
+			end,
+		}
 			local jar = { mana = 0, maxMana = 100, targetId = nil }
 			local handler = ManaInput.CreateInputHandler({ fillRate = 10, maxMana = 100 })
 			ManaInput.ProcessInput(handler, 5)

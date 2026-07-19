@@ -1,6 +1,7 @@
-local Feedback = require(script.Parent.Parent.Parent.src.ReplicatedStorage.Feedback)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Feedback = require(ReplicatedStorage.Feedback)
 
-return function()
+return function(describe, it, expect)
 	describe("Feedback.GetScaleDisplay", function()
 		it("should return display for known classifications", function()
 			local display = Feedback.GetScaleDisplay("weak")

@@ -1,6 +1,7 @@
-local JarSystem = require(script.Parent.Parent.Parent.src.ReplicatedStorage.ManaJar)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local JarSystem = require(ReplicatedStorage.ManaJar)
 
-return function()
+return function(describe, it, expect)
 	describe("JarSystem.CreateJar", function()
 		it("should create a jar with zero mana and given maxMana", function()
 			local jar = JarSystem.CreateJar(100)

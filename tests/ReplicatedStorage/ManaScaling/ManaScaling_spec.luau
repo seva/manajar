@@ -1,6 +1,7 @@
-local ManaScaling = require(script.Parent.Parent.Parent.src.ReplicatedStorage.ManaScaling)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ManaScaling = require(ReplicatedStorage.ManaScaling)
 
-return function()
+return function(describe, it, expect)
 	describe("ManaScaling.CalculateScaleFactor", function()
 		it("should return 1.0 when mana equals resistance", function()
 			local scale = ManaScaling.CalculateScaleFactor(50, 50)

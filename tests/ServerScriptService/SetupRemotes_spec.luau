@@ -23,7 +23,7 @@ require(script.Parent.Parent.Parent.src.ServerScriptService.SetupRemotes)
 
 Instance.new = origNew
 
-return function()
+return function(describe, it, expect)
 	describe("SetupRemotes", function()
 		it("should create RemoteEvents in ReplicatedStorage", function()
 			local remoteEvents = {}

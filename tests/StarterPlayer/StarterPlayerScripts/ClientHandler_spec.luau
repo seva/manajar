@@ -15,9 +15,9 @@ local function makeMockRemoteEvents()
 	}
 end
 
-local ClientHandler = require(script.Parent.Parent.Parent.src.StarterPlayer.StarterPlayerScripts.ClientHandler)
+local ClientHandler = require(game:GetService("StarterPlayer"):FindFirstChild("StarterPlayerScripts"):FindFirstChild("ClientHandler") or game:GetService("ReplicatedStorage").tests.StarterPlayer.StarterPlayerScripts.ClientHandler)
 
-return function()
+return function(describe, it, expect)
 	describe("ClientHandler.Create", function()
 		it("should create a handler with default values", function()
 			local handler = ClientHandler.Create(makeMockRemoteEvents())

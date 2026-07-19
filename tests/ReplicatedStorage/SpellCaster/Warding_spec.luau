@@ -1,6 +1,7 @@
-local Warding = require(script.Parent.Parent.Parent.src.ReplicatedStorage.SpellCaster.Warding)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Warding = require(ReplicatedStorage.SpellCaster.Warding)
 
-return function()
+return function(describe, it, expect)
 	describe("Warding.SanitizeSpellEffect", function()
 		it("should accept a valid spell effect", function()
 			local effect = Warding.SanitizeSpellEffect({

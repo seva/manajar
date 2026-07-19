@@ -1,6 +1,7 @@
-local EffectApplier = require(script.Parent.Parent.Parent.src.ReplicatedStorage.EffectApplier)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local EffectApplier = require(ReplicatedStorage.EffectApplier)
 
-return function()
+return function(describe, it, expect)
 	describe("EffectApplier.ApplyEffect", function()
 		it("should apply damage effect to target", function()
 			local result = EffectApplier.ApplyEffect("goblin_1", {

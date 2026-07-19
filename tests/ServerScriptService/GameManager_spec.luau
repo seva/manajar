@@ -132,9 +132,9 @@ local EffectApplier = {
 
 ReplicatedStorage.EffectApplier = EffectApplier
 
-local GameManager = require(script.Parent.Parent.Parent.src.ServerScriptService.GameManager)
+local GameManager = require(game:GetService("ServerScriptService").GameManager)
 
-return function()
+return function(describe, it, expect)
 	describe("GameManager.GetOrCreateJar", function()
 		it("should create a jar for a new player", function()
 			local player = createMockPlayer("TestPlayer1")

@@ -3,7 +3,13 @@
 	"tree": {
 		"$className": "DataModel",
 		"ReplicatedStorage": {
-			"$path": "src/ReplicatedStorage"
+			"$path": "src/ReplicatedStorage",
+			"tests": {
+				"$path": "tests"
+			},
+			"test-framework": {
+				"$path": "test-framework.luau"
+			}
 		},
 		"ServerScriptService": {
 			"$path": "src/ServerScriptService"
