@@ -1,10 +1,11 @@
 -- in-playtest: covered manually in Studio; no automated test infra for play mode
+warn("[BOOTSTRAP-CLIENT] Starting client initialization")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
-local ClientHandler = require(script.Parent.ClientHandler)
+local ClientHandler = require(script.Parent:WaitForChild("ClientHandler"))
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -57,6 +58,7 @@ manaText.TextScaled = true
 manaText.Text = "0 / 100"
 manaText.Font = Enum.Font.SourceSansBold
 manaText.Parent = manaBar
+warn("[BOOTSTRAP-CLIENT] HUD created")
 
 local remotes = ReplicatedStorage:WaitForChild("Remotes")
 local remoteEvents = {
@@ -115,3 +117,5 @@ end)
 RunService.RenderStepped:Connect(function(dt)
 	ClientHandler.ProcessFillTick(handler, dt)
 end)
+
+warn("[BOOTSTRAP-CLIENT] Client initialization complete")

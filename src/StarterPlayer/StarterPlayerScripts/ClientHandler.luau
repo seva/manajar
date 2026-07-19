@@ -3,8 +3,14 @@ export type ClientConfig = {
 	maxMana: number,
 }
 
+export type RemoteEvents = {
+	FillJar: { FireServer: (any) -> () },
+	CastSpell: { FireServer: (any) -> () },
+	SelectTarget: { FireServer: (any) -> () },
+}
+
 export type ClientHandler = {
-	remoteEvents: { FillJar: { FireServer: (any) -> () }, CastSpell: { FireServer: (any) -> () }, SelectTarget: { FireServer: (any) -> () } },
+	remoteEvents: RemoteEvents,
 	config: ClientConfig,
 	accumulatedInput: number,
 	isFilling: boolean,
@@ -18,7 +24,7 @@ local DEFAULT_CONFIG: ClientConfig = {
 
 local ClientHandler = {}
 
-function ClientHandler.Create(remoteEvents: ClientHandler["remoteEvents"], config: ClientConfig?): ClientHandler
+function ClientHandler.Create(remoteEvents: RemoteEvents, config: ClientConfig?): ClientHandler
 	local cfg = if config then config else DEFAULT_CONFIG
 	return {
 		remoteEvents = remoteEvents,

@@ -1,4 +1,5 @@
 -- in-playtest: covered manually in Studio; no automated test infra for play mode
+warn("[BOOTSTRAP-SERVER] Starting server initialization")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
@@ -22,8 +23,10 @@ spawnLocation.Anchored = true
 spawnLocation.Duration = 0
 spawnLocation.Neutral = true
 spawnLocation.Parent = Workspace
+warn("[BOOTSTRAP-SERVER] Platform and spawn created")
 
 require(script.Parent.SetupRemotes)
+warn("[BOOTSTRAP-SERVER] Remotes initialized")
 
 local GameManager = require(script.Parent.GameManager)
 local JarSystem = require(ReplicatedStorage.ManaJar)
@@ -87,3 +90,5 @@ remotes.SelectTarget.OnServerEvent:Connect(function(player, targetId)
 		})
 	end
 end)
+
+warn("[BOOTSTRAP-SERVER] Server initialization complete")
