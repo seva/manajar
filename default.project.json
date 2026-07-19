@@ -22,7 +22,10 @@
 			"$className": "Players"
 		},
 		"Lighting": {
-			"$className": "Lighting"
+			"$className": "Lighting",
+			"$properties": {
+				"Technology": "Voxel"
+			}
 		}
 	}
 }
