@@ -8,6 +8,38 @@ _Phase 3 prerequisite. Product research to clarify original requirement._
 
 **Interpretation:** Players bring their own LLM provider credentials via OAuth authentication, using their subscription plans rather than the game paying per-token.
 
+## Gamer Persona Analysis
+
+**Target audience:** Roblox players — primarily kids and teens
+
+### Demographics (2025-2026)
+- **Under 13:** ~35-40% of users
+- **13-17:** ~16-22% of users
+- **18-24:** ~21-25% of users (fastest-growing)
+- **25+:** ~19% of users
+
+**Key insight:** ~60% of players are under 18. Most are players/consumers, not developers.
+
+### Technical Capability
+- **Low (majority):** Comfortable with game navigation, avatar customization, social features. Limited technical knowledge.
+- **Intermediate:** Teens who experiment with Roblox Studio, follow tutorials.
+- **Advanced:** Dedicated creators (rare) who master Lua scripting and game development.
+
+### Implications for Authentication
+**Players cannot and will not:**
+- Generate API keys from developer consoles
+- Understand what "API keys" are
+- Manage per-token billing
+- Configure technical settings
+
+**Players expect:**
+- Seamless authentication (like signing into a game)
+- Click button → authenticate via browser → done
+- Use existing subscriptions (ChatGPT Plus, Claude Pro, etc.)
+- No technical configuration
+
+**Conclusion:** OAuth is required. API keys are not acceptable for the target persona.
+
 ## Research Findings
 
 ### OAuth Support by Provider (2026)
@@ -119,13 +151,19 @@ _Phase 3 prerequisite. Product research to clarify original requirement._
 
 ## Recommendation
 
-**Start with Option A (API Key)** for Phase 3:
-- Simplest implementation
-- Works with all providers
-- Fastest path to working LLM integration
-- Can add OAuth later as enhancement
+**OAuth is required** (gamer persona cannot use API keys).
 
-**Future enhancement:** Add OAuth support for Google Gemini and xAI Grok (subscription-based).
+**Constraint:** OAuth support is limited to Google Gemini and xAI Grok. Most providers (OpenAI, Anthropic) do not support OAuth for third-party API access.
+
+**Phase 3 approach:**
+1. **Start with Google Gemini OAuth** — full OAuth 2.0 support, players use their Google account
+2. **Add xAI Grok OAuth** — players use their X Premium+/SuperGrok subscription
+3. **Future:** Investigate if OpenAI/Anthropic add OAuth support, or use gateway/proxy
+
+**Implementation priority:**
+- Google Gemini OAuth flow (Phase 3)
+- xAI Grok OAuth flow (Phase 3 or 4)
+- Other providers (Phase 4+, if OAuth becomes available)
 
 ## Open Questions
 
@@ -159,7 +197,9 @@ _Phase 3 prerequisite. Product research to clarify original requirement._
 
 ## Decision Required
 
-**Seva to clarify:**
-- Is "BYO provider (OAuth)" specifically OAuth, or does API key count?
-- Which providers should be supported in Phase 3?
-- Is subscription-based (OAuth) required, or is pay-per-token (API key) acceptable?
+**OAuth is required** (gamer persona constraint).
+
+**Seva to decide:**
+- Which OAuth providers to support first? (Google Gemini, xAI Grok, or both?)
+- Should we implement both in Phase 3, or start with one?
+- What's the fallback if a player doesn't have a supported subscription?
