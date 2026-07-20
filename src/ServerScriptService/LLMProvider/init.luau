@@ -1,6 +1,6 @@
 local HttpService = game:GetService("HttpService")
 
-local CredentialStore = require(script.Parent.CredentialStore)
+local CredentialStore = require(script.CredentialStore)
 local SpellCaster = require(game.ReplicatedStorage.SpellCaster)
 local Warding = require(game.ReplicatedStorage.SpellCaster.Warding)
 
