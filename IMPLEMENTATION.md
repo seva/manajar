@@ -51,7 +51,15 @@ Artifacts:
 
 ## Phase 3: LLM Integration ([#4](https://github.com/seva/manajar/issues/4))
 
-- [ ] **Product research: BYO LLM provider requirement** — document discovery artifact `docs/discovery-byo-provider.md`
+### Discovery & Design (Complete)
+- [x] **Product research: BYO LLM provider requirement** — document discovery artifact `docs/discovery-byo-provider.md`
+- [x] Research Google Gemini OAuth flow (endpoints, scopes, token refresh)
+- [x] Research xAI Grok OAuth flow (endpoints, scopes, token refresh)
+- [x] Design credential storage schema (DataStore)
+- [x] Design auth flow (external web app or in-game URL)
+- [x] Document implementation design in `docs/discovery-byo-provider.md`
+
+### Implementation (Pending Decisions)
 - [ ] Choose LLM provider (OpenAI, Anthropic, or local)
 - [ ] Set up API credentials (environment variables or config)
 - [ ] Handle API keys securely (not in code)
@@ -72,5 +80,12 @@ Artifacts:
 - [ ] Integration tests for end-to-end spell generation
 - [ ] Test error cases (API down, timeout, invalid response)
 - [ ] Test output validation (Warding)
+
+### Open Questions (Blockers)
+- [ ] Web app hosting for OAuth callback (Vercel, Netlify, self-hosted?)
+- [ ] Domain for OAuth flow
+- [ ] Fallback strategy if no provider connected
+- [ ] Rate limiting strategy
+- [ ] Cost tracking for Gemini (pay-per-token)
 
 _Last updated: 2026-07-19_
