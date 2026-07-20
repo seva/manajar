@@ -47,4 +47,30 @@ Artifacts:
 - [x] Playtest: core loop is understandable in 5 minutes
 - [ ] (Further tasks TBD)
 
-_Last updated: 2026-07-18_
+---
+
+## Phase 3: LLM Integration ([#4](https://github.com/seva/manajar/issues/4))
+
+- [ ] **Product research: BYO LLM provider requirement** — document discovery artifact `docs/discovery-byo-provider.md`
+- [ ] Choose LLM provider (OpenAI, Anthropic, or local)
+- [ ] Set up API credentials (environment variables or config)
+- [ ] Handle API keys securely (not in code)
+- [ ] Create src/ReplicatedStorage/LLMProvider/init.luau
+- [ ] Implement GenerateSpell(request) -> spell_effect
+- [ ] Handle API calls with proper error handling
+- [ ] Add timeout and retry logic
+- [ ] Rate limiting and cost tracking
+- [ ] Design system prompt for spell generation
+- [ ] Define structured output schema (JSON)
+- [ ] Test prompt variations for quality
+- [ ] Ensure output is safe and kid-friendly
+- [ ] Replace MockLLMProvider() with real LLMProvider
+- [ ] Wire into GameManager.OnPlayerCastSpell()
+- [ ] Handle latency (async calls, loading states)
+- [ ] Handle errors gracefully (fallback to mock?)
+- [ ] Unit tests for LLMProvider module
+- [ ] Integration tests for end-to-end spell generation
+- [ ] Test error cases (API down, timeout, invalid response)
+- [ ] Test output validation (Warding)
+
+_Last updated: 2026-07-19_
