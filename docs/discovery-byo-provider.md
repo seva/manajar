@@ -307,6 +307,264 @@ Authorization: Bearer <access_token>
 
 ---
 
+## Implementation Design
+
+### Credential Storage Schema (Roblox DataStore)
+
+**DataStore Name:** `PlayerLLMCredentials`
+
+**Key Format:** `Player_{userId}`
+
+**Value Schema:**
+```luau
+{
+  provider: "gemini" | "grok",
+  accessToken: string,
+  refreshToken: string?,  -- Gemini only (Grok uses device code)
+  expiresAt: number,      -- Unix timestamp
+  subscriptionType: string?,  -- "supergrok" | "xpremium" | nil (Gemini)
+  createdAt: number,
+  lastUsed: number,
+}
+```
+
+**Security:**
+- Tokens stored server-side only (never replicated to client)
+- DataStore encryption at rest (Roblox-managed)
+- Per-user isolation (key includes userId)
+- Server retrieves tokens before LLM calls
+
+---
+
+### Auth Flow Design
+
+**Option A: External Web App (Recommended)**
+
+```
+1. Player clicks "Connect LLM Provider" in game
+2. Game shows URL: https://manajar.app/auth?userId={userId}
+3. Player opens URL in browser
+4. Web app shows provider selection (Gemini / Grok)
+5. Player authenticates via OAuth
+6. Web app receives tokens
+7. Web app stores tokens in backend API
+8. Roblox server polls backend API for tokens
+9. Server stores tokens in DataStore
+10. Player returns to game — LLM integration active
+```
+
+**Pros:**
+- Simple UX (click link → authenticate → done)
+- Works for both providers
+- No device code entry required
+- Backend handles OAuth complexity
+
+**Cons:**
+- Requires external web app + backend API
+- Additional infrastructure (hosting, domain, SSL)
+
+**Option B: Device Code Flow (xAI Pattern)**
+
+```
+1. Player clicks "Connect Grok" in game
+2. Game shows: "Visit https://accounts.x.ai/device and enter code: ABC123"
+3. Player opens URL on phone/laptop
+4. Player enters code
+5. Player authenticates
+6. Roblox server polls xAI for tokens
+7. Server stores tokens in DataStore
+8. Player returns to game — LLM integration active
+```
+
+**Pros:**
+- No external web app needed (for xAI)
+- Works on headless devices
+
+**Cons:**
+- Requires manual code entry (friction for kids)
+- Only works for xAI (Gemini uses different flow)
+- More complex UX
+
+**Option C: Hybrid (Recommended for Phase 3)**
+
+- **Gemini:** External web app (Option A)
+- **Grok:** Device code flow (Option B) OR external web app
+
+**Rationale:**
+- Device code flow is simpler for Grok (no backend needed)
+- External web app is better UX for Gemini (no code entry)
+- Can unify later with external web app for both
+
+---
+
+### Backend API Design (for Option A)
+
+**Endpoints:**
+
+```
+POST /api/auth/start
+  Body: { userId: string, provider: "gemini" | "grok" }
+  Response: { authUrl: string, state: string }
+
+POST /api/auth/callback
+  Body: { state: string, code: string }
+  Response: { success: boolean }
+
+GET /api/auth/status/{userId}
+  Response: { connected: boolean, provider: string?, expiresAt: number? }
+
+DELETE /api/auth/{userId}
+  Response: { success: boolean }
+```
+
+**Flow:**
+1. Roblox server calls `/api/auth/start` → gets authUrl
+2. Roblox shows authUrl to player
+3. Player authenticates → web app calls `/api/auth/callback`
+4. Web app exchanges code for tokens
+5. Web app stores tokens in database
+6. Roblox server polls `/api/auth/status/{userId}` until connected
+7. Roblox server retrieves tokens → stores in DataStore
+
+---
+
+### LLMProvider Module Design
+
+```luau
+-- src/ServerScriptService/LLMProvider/init.luau
+
+local HttpService = game:GetService("HttpService")
+local DataStoreService = game:GetService("DataStoreService")
+
+local CredentialStore = require(script.Parent.CredentialStore)
+
+local LLMProvider = {}
+
+function LLMProvider.GenerateSpell(player, request)
+  local credentials = CredentialStore.GetCredentials(player.UserId)
+  if not credentials then
+    return nil, "No LLM provider connected"
+  end
+  
+  if credentials.expiresAt < os.time() then
+    local success, err = CredentialStore.RefreshCredentials(player.UserId)
+    if not success then
+      return nil, "Credentials expired: " .. err
+    end
+    credentials = CredentialStore.GetCredentials(player.UserId)
+  end
+  
+  if credentials.provider == "gemini" then
+    return LLMProvider.CallGemini(credentials, request)
+  elseif credentials.provider == "grok" then
+    return LLMProvider.CallGrok(credentials, request)
+  else
+    return nil, "Unknown provider: " .. credentials.provider
+  end
+end
+
+function LLMProvider.CallGemini(credentials, request)
+  local url = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent"
+  local headers = {
+    ["Authorization"] = "Bearer " .. credentials.accessToken,
+    ["Content-Type"] = "application/json",
+  }
+  
+  local body = {
+    contents = {
+      {
+        role = "user",
+        parts = {
+          { text = LLMProvider.BuildPrompt(request) }
+        }
+      }
+    }
+  }
+  
+  local success, response = pcall(function()
+    return HttpService:JSONDecode(
+      HttpService:PostAsync(url, HttpService:JSONEncode(body), Enum.HttpContentType.ApplicationJson, false, headers)
+    )
+  end)
+  
+  if not success then
+    return nil, "Gemini API error: " .. tostring(response)
+  end
+  
+  return LLMProvider.ParseGeminiResponse(response)
+end
+
+function LLMProvider.CallGrok(credentials, request)
+  local url = "https://api.x.ai/v1/chat/completions"
+  local headers = {
+    ["Authorization"] = "Bearer " .. credentials.accessToken,
+    ["Content-Type"] = "application/json",
+  }
+  
+  local body = {
+    model = "grok-build-0.1",
+    messages = {
+      {
+        role = "system",
+        content = LLMProvider.GetSystemPrompt()
+      },
+      {
+        role = "user",
+        content = LLMProvider.BuildPrompt(request)
+      }
+    }
+  }
+  
+  local success, response = pcall(function()
+    return HttpService:JSONDecode(
+      HttpService:PostAsync(url, HttpService:JSONEncode(body), Enum.HttpContentType.ApplicationJson, false, headers)
+    )
+  end)
+  
+  if not success then
+    return nil, "Grok API error: " .. tostring(response)
+  end
+  
+  return LLMProvider.ParseGrokResponse(response)
+end
+
+return LLMProvider
+```
+
+---
+
+### Implementation Phases
+
+**Phase 3a: Gemini OAuth (Week 1-2)**
+1. Design and implement CredentialStore module
+2. Build external web app for Gemini OAuth
+3. Implement backend API for token exchange
+4. Implement LLMProvider.CallGemini
+5. Test end-to-end with Gemini
+
+**Phase 3b: Grok OAuth (Week 2-3)**
+1. Implement device code flow for Grok
+2. Implement LLMProvider.CallGrok
+3. Test end-to-end with Grok
+
+**Phase 3c: Integration (Week 3-4)**
+1. Replace MockLLMProvider with real LLMProvider
+2. Add UI for provider selection
+3. Add error handling and fallbacks
+4. Test full gameplay loop
+
+---
+
+## Open Questions
+
+1. **Web app hosting:** Where to host the OAuth callback app? (Vercel, Netlify, self-hosted?)
+2. **Domain:** Do we have a domain for manajar.app? (or use GitHub Pages?)
+3. **Fallback:** What happens if player has no LLM provider connected? (Show error? Use mock?)
+4. **Rate limiting:** How to handle API rate limits? (Queue requests? Show cooldown?)
+5. **Cost tracking:** Should we track per-user API costs? (Gemini pay-per-token)
+
+---
+
 ## Alternative Approach: Browser Session Hijacking
 
 **Inspiration:** [grok-research-mcp](https://github.com/seva/grok-research-mcp)
