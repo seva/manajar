@@ -203,3 +203,148 @@ _Phase 3 prerequisite. Product research to clarify original requirement._
 - Which OAuth providers to support first? (Google Gemini, xAI Grok, or both?)
 - Should we implement both in Phase 3, or start with one?
 - What's the fallback if a player doesn't have a supported subscription?
+
+---
+
+## Alternative Approach: Browser Session Hijacking
+
+**Inspiration:** [grok-research-mcp](https://github.com/seva/grok-research-mcp)
+
+### Pattern
+
+1. **Browser-based auth** — User logs in via headed browser (Playwright)
+2. **Token extraction** — Capture session cookies from browser
+3. **Headless LLM interaction** — Use cookies in HTTP client to call web API
+
+### grok-research-mcp Implementation
+
+```python
+# auth/browser.py
+async def capture(timeout: int = 300) -> dict:
+    # Launch headed browser
+    browser = await playwright.chromium.launch(headless=False)
+    context = await browser.new_context()
+    page = await context.new_page()
+    
+    # Navigate to login page
+    await page.goto("https://grok.com/sign-in")
+    
+    # Wait for user to authenticate (poll for cookies)
+    while True:
+        cookies = await context.cookies()
+        if _has_required_cookies(cookies):  # sso, sso-rw
+            break
+        await asyncio.sleep(2)
+    
+    # Capture cookies + statsig_id
+    cookies = await context.cookies()
+    statsig_id = await page.evaluate("localStorage.getItem('statsig_id')")
+    await browser.close()
+    
+    return {"cookies": cookies, "statsig_id": statsig_id}
+
+# client/session.py
+# Use cookies in httpx session for API calls
+session = httpx.AsyncClient(cookies=cookie_dict)
+response = await session.post("https://grok.com/conversations/new", ...)
+```
+
+### Applicability to Other Providers
+
+| Provider | Web Interface | Session Cookies | Bot Detection | Feasibility |
+|----------|---------------|-----------------|---------------|-------------|
+| **Grok** | grok.com | ✅ sso, sso-rw | ✅ (handled) | ✅ Proven |
+| **ChatGPT** | chat.openai.com | ✅ session cookies | ✅ (likely strict) | ⚠️ Possible |
+| **Claude** | claude.ai | ✅ session cookies | ✅ (likely strict) | ⚠️ Possible |
+| **Gemini** | gemini.google.com | ✅ session cookies | ✅ (likely strict) | ⚠️ Possible |
+
+**Technical feasibility:** Any web-based LLM service can be accessed this way, but:
+- Requires reverse-engineering web API endpoints
+- May violate ToS (unofficial API access)
+- Requires handling bot detection (fingerprinting, CAPTCHAs)
+- Session cookies expire (typically 30 days)
+- Requires browser automation library (Playwright, Selenium)
+
+### Roblox Constraints
+
+**Problem:** Roblox cannot run Playwright/Selenium on servers.
+
+**Solutions:**
+
+#### Option A: External Auth Service
+```
+User → Browser (Playwright) → Auth Service (captures cookies) → Roblox DataStore
+Roblox Server → DataStore → HTTP calls with cookies → LLM web API
+```
+
+**Pros:**
+- Works for any provider
+- No official API needed
+
+**Cons:**
+- Requires external service (cost, complexity)
+- ToS violations likely
+- Bot detection challenges
+- Session expiry management
+
+#### Option B: Pre-Authenticated Sessions
+```
+User runs local auth tool (Playwright) → Captures cookies → Stores in Roblox DataStore
+Roblox Server → DataStore → HTTP calls with cookies → LLM web API
+```
+
+**Pros:**
+- No external service needed
+- User controls auth
+
+**Cons:**
+- User must run external tool (friction)
+- ToS violations likely
+- Session expiry (user must re-auth)
+- Not kid-friendly
+
+#### Option C: Official OAuth (Where Available)
+```
+User → OAuth flow → Access token → Roblox DataStore
+Roblox Server → DataStore → HTTP calls with token → LLM API
+```
+
+**Pros:**
+- Official, ToS-compliant
+- No bot detection
+- Token refresh handled
+
+**Cons:**
+- Limited provider support (Gemini, xAI only)
+- Requires subscription
+
+### Comparison
+
+| Approach | ToS Compliance | Provider Support | Complexity | Kid-Friendly |
+|----------|----------------|------------------|------------|--------------|
+| **Browser hijacking** | ❌ Likely violates | ✅ Any provider | 🔴 High | ❌ No |
+| **External auth service** | ❌ Likely violates | ✅ Any provider | 🔴 High | ⚠️ Maybe |
+| **Official OAuth** | ✅ Compliant | ⚠️ Limited (Gemini, xAI) | 🟢 Low | ✅ Yes |
+
+### Recommendation
+
+**Browser session hijacking is not viable for Roblox:**
+1. **ToS violations** — Unofficial API access likely violates provider ToS
+2. **Bot detection** — Providers actively block automated access
+3. **Not kid-friendly** — Requires running external tools or complex auth flows
+4. **Session management** — Cookies expire, require re-auth
+5. **Roblox constraints** — Cannot run browser automation on servers
+
+**Official OAuth is the only viable approach for Roblox:**
+- ToS-compliant
+- Kid-friendly (browser-based auth)
+- Limited provider support (Gemini, xAI)
+- Lower complexity
+
+### Decision
+
+**Stick with official OAuth approach.** Browser session hijacking is technically interesting but not viable for:
+- Roblox server constraints
+- Kid-friendly UX
+- ToS compliance
+- Long-term maintainability
