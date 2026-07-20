@@ -19,7 +19,9 @@ end
 local function GetOrCreateTargetingState(player)
 	if targetingStates[player] == nil then
 		local state = Targeting.CreateState()
-		Targeting.RegisterTarget(state, { id = "training_dummy", name = "Training Dummy", resistance = 10 })
+		Targeting.RegisterTarget(state, { id = "Training Dummy", name = "Training Dummy", resistance = 10 })
+		Targeting.RegisterTarget(state, { id = "Stone Golem", name = "Stone Golem", resistance = 30 })
+		Targeting.RegisterTarget(state, { id = "Fire Imp", name = "Fire Imp", resistance = 5 })
 		targetingStates[player] = state
 	end
 	return targetingStates[player]

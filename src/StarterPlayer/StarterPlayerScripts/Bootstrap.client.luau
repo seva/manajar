@@ -22,7 +22,7 @@ statusLabel.BackgroundTransparency = 0.5
 statusLabel.BackgroundColor3 = Color3.new(0, 0, 0)
 statusLabel.TextColor3 = Color3.new(1, 1, 1)
 statusLabel.TextScaled = true
-statusLabel.Text = "Hold LMB to fill jar | R: select target | F: cast spell"
+statusLabel.Text = "Hold LMB: fill | 1/2/3: target | F: cast"
 statusLabel.Font = Enum.Font.SourceSansBold
 statusLabel.Parent = screenGui
 
@@ -100,8 +100,12 @@ UserInputService.InputBegan:Connect(function(input, processed)
 		ClientHandler.StartFill(handler)
 	elseif input.KeyCode == Enum.KeyCode.F then
 		ClientHandler.CastSpell(handler, "Fire")
-	elseif input.KeyCode == Enum.KeyCode.R then
-		ClientHandler.SelectTarget(handler, "training_dummy")
+	elseif input.KeyCode == Enum.KeyCode.One then
+		ClientHandler.SelectTarget(handler, "Training Dummy")
+	elseif input.KeyCode == Enum.KeyCode.Two then
+		ClientHandler.SelectTarget(handler, "Stone Golem")
+	elseif input.KeyCode == Enum.KeyCode.Three then
+		ClientHandler.SelectTarget(handler, "Fire Imp")
 	end
 end)
 
