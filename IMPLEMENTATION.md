@@ -59,33 +59,30 @@ Artifacts:
 - [x] Design auth flow (external web app or in-game URL)
 - [x] Document implementation design in `docs/discovery-byo-provider.md`
 
-### Implementation (Pending Decisions)
-- [ ] Choose LLM provider (OpenAI, Anthropic, or local)
-- [ ] Set up API credentials (environment variables or config)
-- [ ] Handle API keys securely (not in code)
-- [ ] Create src/ReplicatedStorage/LLMProvider/init.luau
-- [ ] Implement GenerateSpell(request) -> spell_effect
-- [ ] Handle API calls with proper error handling
-- [ ] Add timeout and retry logic
-- [ ] Rate limiting and cost tracking
-- [ ] Design system prompt for spell generation
-- [ ] Define structured output schema (JSON)
-- [ ] Test prompt variations for quality
-- [ ] Ensure output is safe and kid-friendly
-- [ ] Replace MockLLMProvider() with real LLMProvider
+### Implementation (Ready)
+- [ ] Create OAuth callback web app (Vercel + manajar.app)
+- [ ] Implement Google Gemini OAuth flow
+- [ ] Implement xAI Grok OAuth flow (device code)
+- [ ] Create CredentialStore module (DataStore integration)
+- [ ] Create LLMProvider module (Gemini + Grok support)
+- [ ] Implement spell generation with real LLM calls
+- [ ] Add error handling and retry logic
+- [ ] Implement per-user rate limiting (5s cooldown)
+- [ ] Add token counting and cost display
+- [ ] Replace MockLLMProvider with real LLMProvider
 - [ ] Wire into GameManager.OnPlayerCastSpell()
 - [ ] Handle latency (async calls, loading states)
-- [ ] Handle errors gracefully (fallback to mock?)
+- [ ] Handle errors gracefully (show error, no fallback)
 - [ ] Unit tests for LLMProvider module
 - [ ] Integration tests for end-to-end spell generation
 - [ ] Test error cases (API down, timeout, invalid response)
 - [ ] Test output validation (Warding)
 
-### Open Questions (Blockers)
-- [ ] Web app hosting for OAuth callback (Vercel, Netlify, self-hosted?)
-- [ ] Domain for OAuth flow
-- [ ] Fallback strategy if no provider connected
-- [ ] Rate limiting strategy
-- [ ] Cost tracking for Gemini (pay-per-token)
+### Open Questions (Resolved)
+- [x] Web app hosting for OAuth callback (Vercel, Netlify, self-hosted?) → **Vercel**
+- [x] Domain for OAuth flow → **manajar.app**
+- [x] Fallback strategy if no provider connected → **Error message, block spell casting**
+- [x] Rate limiting strategy → **Per-user cooldown (1 spell per 5 seconds)**
+- [x] Cost tracking for Gemini (pay-per-token) → **Basic token counting, display to user**
 
 _Last updated: 2026-07-19_

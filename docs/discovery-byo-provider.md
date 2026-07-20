@@ -266,44 +266,41 @@ Authorization: Bearer <access_token>
 - xAI Grok OAuth flow (Phase 3 or 4)
 - Other providers (Phase 4+, if OAuth becomes available)
 
-## Open Questions
+## Open Questions (Resolved)
 
 1. **Which providers to support first?**
-   - OpenAI (most popular, API key)
-   - Google Gemini (OAuth support)
-   - Anthropic (API key, but ToS restrictions on OAuth)
+   - ✅ Both Google Gemini (OAuth) and xAI Grok (OAuth)
 
 2. **How to handle OAuth flow in Roblox?**
-   - External browser → callback URL → token storage
-   - Requires web server for OAuth callback
-   - Or use device code flow (no callback needed)
+   - ✅ External web app (Vercel) + device code flow (Grok)
 
 3. **Credential storage security?**
-   - Roblox DataStore (encrypted at rest)
-   - Per-user isolation
-   - No client-side access
+   - ✅ Roblox DataStore (encrypted at rest, per-user isolation, server-side only)
 
 4. **Fallback behavior?**
-   - If user has no credentials → error message
-   - If API call fails → retry logic
-   - If provider down → fallback provider?
+   - ✅ If user has no credentials → error message, block spell casting
+   - ✅ If API call fails → retry logic
+   - ✅ If provider down → show error (no automatic fallback)
 
 ## Next Steps
 
-1. **Decide:** API key only, or API key + OAuth?
-2. **Choose providers:** OpenAI, Gemini, or both?
-3. **Design credential storage:** DataStore schema
+1. ~~**Decide:** API key only, or API key + OAuth?~~ ✅ OAuth required
+2. ~~**Choose providers:** OpenAI, Gemini, or both?~~ ✅ Gemini + Grok
+3. ~~**Design credential storage:** DataStore schema~~ ✅ Complete
 4. **Implement LLMProvider module:** Abstract auth pattern
-5. **Add OAuth flow:** If supporting subscriptions
+5. **Add OAuth flow:** External web app + device code
 
-## Decision Required
+## Decisions Made
 
 **OAuth is required** (gamer persona constraint).
 
-**Seva to decide:**
-- Which OAuth providers to support first? (Google Gemini, xAI Grok, or both?)
-- Should we implement both in Phase 3, or start with one?
-- What's the fallback if a player doesn't have a supported subscription?
+**Resolved:**
+- ✅ **Providers:** Both Google Gemini and xAI Grok (Phase 3a + 3b)
+- ✅ **Web app hosting:** Vercel (free tier, serverless functions, easy OAuth callback)
+- ✅ **Domain:** manajar.app (simple, memorable)
+- ✅ **Fallback:** Show error message, block spell casting without provider connected
+- ✅ **Rate limiting:** Per-user cooldown (1 spell per 5 seconds)
+- ✅ **Cost tracking:** Basic token counting, display estimated cost to user
 
 ---
 
