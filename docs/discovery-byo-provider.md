@@ -42,18 +42,119 @@ _Phase 3 prerequisite. Product research to clarify original requirement._
 
 ## Research Findings
 
-### OAuth Support by Provider (2026)
+### OAuth Provider Research (Completed)
 
-| Provider | OAuth Support | Use Case | Notes |
-|----------|---------------|----------|-------|
-| **Google Gemini** | ✅ Full OAuth 2.0 | API access, model tuning | Strong support, Google account OAuth |
-| **xAI (Grok)** | ✅ OAuth (PKCE/device flow) | SuperGrok/X Premium+ subscription | No separate API key needed for subscribers |
-| **OpenAI** | ⚠️ Limited | ChatGPT/Codex subscription reuse | No standard OAuth for core API; API keys preferred |
-| **Anthropic** | ⚠️ Restricted | Claude Pro/Max subscription | OAuth tokens (`sk-ant-oat01-...`) restricted to official products; ToS violations for third-party use |
-| **Mistral** | ❌ No OAuth | API keys only | Standard Bearer token |
-| **Together AI** | ❌ No OAuth | API keys only | Account login uses OAuth, API uses keys |
-| **Fireworks AI** | ❌ No OAuth | API keys only | Standard Bearer token |
-| **Groq** | ❌ No OAuth | API keys only | Fast inference, OpenAI-compatible |
+### Google Gemini OAuth
+
+**Status:** ✅ Full OAuth 2.0 support
+
+**Flow:**
+1. Create OAuth 2.0 Client ID in Google Cloud Console (Desktop app type)
+2. User authenticates via browser → receives authorization code
+3. Exchange code for access token + refresh token
+4. Use access token in API calls (Bearer token)
+5. Refresh token when expired
+
+**Scopes:**
+- `https://www.googleapis.com/auth/cloud-platform` — Full access to Google Cloud
+- `https://www.googleapis.com/auth/generative-language.tuning` — Model tuning
+- `https://www.googleapis.com/auth/generative-language.retriever` — Semantic retrieval
+
+**API Endpoint:** `https://generativelanguage.googleapis.com/v1/models`
+
+**Token Lifetime:**
+- Access tokens: ~1 hour (configurable)
+- Refresh tokens: Long-lived (6 months if unused)
+
+**Authentication:**
+```
+Authorization: Bearer <access_token>
+```
+
+**SDK Support:**
+- Python: `google-generativeai` (auto-detects ADC)
+- REST: Direct HTTP calls with Bearer token
+
+**Cost Model:** Pay-per-token (billed to Google Cloud project)
+
+**Notes:**
+- Requires Google Cloud project setup
+- OAuth is for stricter access control than API keys
+- Most users should use API keys instead (simpler)
+
+---
+
+### xAI Grok OAuth
+
+**Status:** ✅ OAuth 2.0 device code flow
+
+**Flow:**
+1. Request device code from `auth.x.ai`
+2. User opens verification URL in browser
+3. User signs in with X account (SuperGrok) or Google account (X Premium+)
+4. Approve access
+5. Poll for tokens → save to local storage
+6. Auto-refresh tokens in background
+
+**Auth Server:** `https://accounts.x.ai`
+
+**API Endpoint:** `https://api.x.ai/v1`
+
+**Token Storage:** `~/.hermes/auth.json` (or equivalent)
+
+**Subscription Requirements:**
+- SuperGrok subscription (grok.com) OR
+- X Premium+ subscription (linked X account)
+
+**Models Available:**
+- `grok-build-0.1` (default)
+- `grok-4.3`
+- `grok-4.20-0309-reasoning`
+- `grok-4.20-0309-non-reasoning`
+- `grok-4.20-multi-agent-0309`
+
+**Cost Model:** Subscription-based (no per-token billing)
+
+**Notes:**
+- No API key required (uses subscription)
+- Some SuperGrok tiers may get HTTP 403 (tier restrictions)
+- OAuth covers all xAI tools: chat, TTS, image gen, video gen, transcription
+- Device code flow works on headless/remote servers
+
+---
+
+## OAuth Provider Comparison
+
+| Feature | Google Gemini | xAI Grok |
+|---------|---------------|----------|
+| **OAuth Flow** | Authorization code | Device code |
+| **Auth Server** | Google OAuth 2.0 | accounts.x.ai |
+| **Subscription Required** | ❌ No (pay-per-token) | ✅ Yes (SuperGrok/X Premium+) |
+| **Cost Model** | Pay-per-token | Subscription-based |
+| **Token Refresh** | Manual or SDK | Automatic |
+| **Headless Support** | ✅ Yes | ✅ Yes (device code) |
+| **API Endpoint** | generativelanguage.googleapis.com | api.x.ai/v1 |
+| **Scopes** | cloud-platform, generative-language.* | N/A (subscription-based) |
+| **Models** | Gemini 2.0, 1.5, etc. | grok-build-0.1, grok-4.3, etc. |
+| **SDK** | google-generativeai | xai-sdk |
+
+---
+
+## Recommendation
+
+**OAuth is required** (gamer persona constraint).
+
+**Constraint:** OAuth support is limited to Google Gemini and xAI Grok. Most providers (OpenAI, Anthropic) do not support OAuth for third-party API access.
+
+**Phase 3 approach:**
+1. **Start with Google Gemini OAuth** — full OAuth 2.0 support, players use their Google account
+2. **Add xAI Grok OAuth** — players use their X Premium+/SuperGrok subscription
+3. **Future:** Investigate if OpenAI/Anthropic add OAuth support, or use gateway/proxy
+
+**Implementation priority:**
+- Google Gemini OAuth flow (Phase 3)
+- xAI Grok OAuth flow (Phase 3 or 4)
+- Other providers (Phase 4+, if OAuth becomes available)
 
 ### Key Findings
 
