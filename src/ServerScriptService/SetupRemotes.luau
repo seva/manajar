@@ -20,4 +20,16 @@ local updateJarEvent = Instance.new("RemoteEvent")
 updateJarEvent.Name = "UpdateJarDisplay"
 updateJarEvent.Parent = remotesFolder
 
+local connectProviderEvent = Instance.new("RemoteEvent")
+connectProviderEvent.Name = "ConnectProvider"
+connectProviderEvent.Parent = remotesFolder
+
+local disconnectProviderEvent = Instance.new("RemoteEvent")
+disconnectProviderEvent.Name = "DisconnectProvider"
+disconnectProviderEvent.Parent = remotesFolder
+
+local checkProviderEvent = Instance.new("RemoteEvent")
+checkProviderEvent.Name = "CheckProvider"
+checkProviderEvent.Parent = remotesFolder
+
 return {}

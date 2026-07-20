@@ -142,4 +142,125 @@ remotes.SelectTarget.OnServerEvent:Connect(function(player, targetId)
 	end
 end)
 
+-- OAuth flow for connecting LLM providers
+remotes.ConnectProvider.OnServerEvent:Connect(function(player, provider)
+	if typeof(provider) ~= "string" then
+		return
+	end
+	
+	if provider == "gemini" then
+		-- For Gemini, redirect to web app
+		local authUrl = string.format("https://manajar.app/auth?userId=%d&provider=gemini", player.UserId)
+		remotes.UpdateJarDisplay:FireClient(player, {
+			message = "Open this URL to connect Gemini: " .. authUrl,
+		})
+	elseif provider == "grok" then
+		-- For Grok, initiate device code flow
+		local HttpService = game:GetService("HttpService")
+		local success, response = pcall(function()
+			return HttpService:PostAsync(
+				"https://manajar.app/api/auth/grok-device",
+				HttpService:JSONEncode({ userId = player.UserId }),
+				Enum.HttpContentType.ApplicationJson
+			)
+		end)
+		
+		if success then
+			local data = HttpService:JSONDecode(response)
+			if data.success then
+				-- Store device code for polling
+				player:SetAttribute("GrokDeviceCode", data.deviceCode)
+				player:SetAttribute("GrokPollInterval", data.interval or 5)
+				
+				remotes.UpdateJarDisplay:FireClient(player, {
+					message = string.format("Visit %s and enter code: %s", data.verificationUri, data.userCode),
+				})
+				
+				-- Start polling for token
+				task.spawn(function()
+					local pollInterval = data.interval or 5
+					local maxAttempts = (data.expiresIn or 600) / pollInterval
+					
+					for i = 1, maxAttempts do
+						task.wait(pollInterval)
+						
+						local pollSuccess, pollResponse = pcall(function()
+							return HttpService:PostAsync(
+								"https://manajar.app/api/auth/grok-poll",
+								HttpService:JSONEncode({
+									userId = player.UserId,
+									deviceCode = data.deviceCode,
+								}),
+								Enum.HttpContentType.ApplicationJson
+							)
+						end)
+						
+						if pollSuccess then
+							local pollData = HttpService:JSONDecode(pollResponse)
+							
+							if pollData.success then
+								-- Save credentials
+								local CredentialStore = require(script.Parent.LLMProvider.CredentialStore)
+								CredentialStore.SaveCredentials(player.UserId, {
+									provider = "grok",
+									accessToken = pollData.accessToken,
+									refreshToken = pollData.refreshToken,
+									expiresAt = pollData.expiresAt,
+								})
+								
+								remotes.UpdateJarDisplay:FireClient(player, {
+									message = "Grok connected successfully!",
+								})
+								return
+							elseif pollData.status == "expired" then
+								remotes.UpdateJarDisplay:FireClient(player, {
+									message = "Device code expired. Please try again.",
+								})
+								return
+							elseif pollData.status == "denied" then
+								remotes.UpdateJarDisplay:FireClient(player, {
+									message = "Access denied.",
+								})
+								return
+							end
+						end
+					end
+					
+					remotes.UpdateJarDisplay:FireClient(player, {
+						message = "Grok connection timed out.",
+					})
+				end)
+			else
+				remotes.UpdateJarDisplay:FireClient(player, {
+					message = "Failed to initiate Grok connection: " .. tostring(data.error),
+				})
+			end
+		else
+			remotes.UpdateJarDisplay:FireClient(player, {
+				message = "Failed to connect to auth server: " .. tostring(response),
+			})
+		end
+	end
+end)
+
+remotes.DisconnectProvider.OnServerEvent:Connect(function(player)
+	GameManager.DisconnectProvider(player.UserId)
+	remotes.UpdateJarDisplay:FireClient(player, {
+		message = "LLM provider disconnected.",
+	})
+end)
+
+remotes.CheckProvider.OnServerEvent:Connect(function(player)
+	local info = GameManager.GetProviderInfo(player.UserId)
+	if info then
+		remotes.UpdateJarDisplay:FireClient(player, {
+			message = string.format("Connected to %s", info.provider),
+		})
+	else
+		remotes.UpdateJarDisplay:FireClient(player, {
+			message = "No LLM provider connected. Use ConnectProvider to connect.",
+		})
+	end
+end)
+
 warn("[BOOTSTRAP-SERVER] Server initialization complete")

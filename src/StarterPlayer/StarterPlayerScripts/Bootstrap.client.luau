@@ -22,7 +22,7 @@ statusLabel.BackgroundTransparency = 0.5
 statusLabel.BackgroundColor3 = Color3.new(0, 0, 0)
 statusLabel.TextColor3 = Color3.new(1, 1, 1)
 statusLabel.TextScaled = true
-statusLabel.Text = "Hold LMB: fill | 1/2/3: target | F: cast"
+statusLabel.Text = "Hold LMB: fill | 1/2/3: target | F: cast | G: connect | H: disconnect"
 statusLabel.Font = Enum.Font.SourceSansBold
 statusLabel.Parent = screenGui
 
@@ -66,6 +66,9 @@ local remoteEvents = {
 	CastSpell = remotes:WaitForChild("CastSpell"),
 	SelectTarget = remotes:WaitForChild("SelectTarget"),
 	UpdateJarDisplay = remotes:WaitForChild("UpdateJarDisplay"),
+	ConnectProvider = remotes:WaitForChild("ConnectProvider"),
+	DisconnectProvider = remotes:WaitForChild("DisconnectProvider"),
+	CheckProvider = remotes:WaitForChild("CheckProvider"),
 }
 
 local handler = ClientHandler.Create({
@@ -106,6 +109,13 @@ UserInputService.InputBegan:Connect(function(input, processed)
 		ClientHandler.SelectTarget(handler, "Stone Golem")
 	elseif input.KeyCode == Enum.KeyCode.Three then
 		ClientHandler.SelectTarget(handler, "Fire Imp")
+	elseif input.KeyCode == Enum.KeyCode.G then
+		-- Connect provider - for now, default to Gemini
+		-- In a full implementation, you'd show a UI to choose provider
+		remoteEvents.ConnectProvider:FireServer("gemini")
+	elseif input.KeyCode == Enum.KeyCode.H then
+		-- Disconnect provider
+		remoteEvents.DisconnectProvider:FireServer()
 	end
 end)
 
@@ -121,5 +131,8 @@ end)
 RunService.RenderStepped:Connect(function(dt)
 	ClientHandler.ProcessFillTick(handler, dt)
 end)
+
+-- Check provider status on join
+remoteEvents.CheckProvider:FireServer()
 
 warn("[BOOTSTRAP-CLIENT] Client initialization complete")
