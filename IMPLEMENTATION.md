@@ -59,24 +59,24 @@ Artifacts:
 - [x] Design auth flow (external web app or in-game URL)
 - [x] Document implementation design in `docs/discovery-byo-provider.md`
 
-### Implementation (Ready)
-- [ ] Create OAuth callback web app (Vercel + manajar.app)
-- [ ] Implement Google Gemini OAuth flow
-- [ ] Implement xAI Grok OAuth flow (device code)
-- [ ] Create CredentialStore module (DataStore integration)
-- [ ] Create LLMProvider module (Gemini + Grok support)
-- [ ] Implement spell generation with real LLM calls
-- [ ] Add error handling and retry logic
-- [ ] Implement per-user rate limiting (5s cooldown)
-- [ ] Add token counting and cost display
-- [ ] Replace MockLLMProvider with real LLMProvider
-- [ ] Wire into GameManager.OnPlayerCastSpell()
-- [ ] Handle latency (async calls, loading states)
-- [ ] Handle errors gracefully (show error, no fallback)
-- [ ] Unit tests for LLMProvider module
-- [ ] Integration tests for end-to-end spell generation
-- [ ] Test error cases (API down, timeout, invalid response)
-- [ ] Test output validation (Warding)
+### Implementation (Complete)
+- [x] Create OAuth callback web app (Vercel + manajar.app)
+- [x] Implement Google Gemini OAuth flow
+- [x] Implement xAI Grok OAuth flow (device code)
+- [x] Create CredentialStore module (DataStore integration)
+- [x] Create LLMProvider module (Gemini + Grok support)
+- [x] Implement spell generation with real LLM calls
+- [x] Add error handling and retry logic
+- [x] Implement per-user rate limiting (5s cooldown)
+- [x] Add token counting and cost display
+- [x] Replace MockLLMProvider with real LLMProvider
+- [x] Wire into GameManager.OnPlayerCastSpell()
+- [x] Handle latency (async calls, loading states)
+- [x] Handle errors gracefully (show error, no fallback)
+- [x] Unit tests for LLMProvider module
+- [x] Integration tests for end-to-end spell generation
+- [x] Test error cases (API down, timeout, invalid response)
+- [x] Test output validation (Warding)
 
 ### Open Questions (Resolved)
 - [x] Web app hosting for OAuth callback (Vercel, Netlify, self-hosted?) → **Vercel**
