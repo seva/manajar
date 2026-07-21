@@ -18,8 +18,8 @@ A Roblox game where players put mana into jars, link them to targets, and cast L
 
 - Language: Luau (Roblox)
 - Runtime: Roblox Studio
-- Test runner: (TBD)
+- Test runner: Rodeo (headless) + Jest (web app)
 - Formatting / linting: Standard Roblox Luau style
 - AI Coding Agent: OpenCode (DeepSeek)
-- LLM for spell generation: (TBD provider, structured output required)
+- LLM for spell generation: Google Gemini (OAuth) + xAI Grok (OAuth)
 - Project focus: Simple, kid-friendly core loop first. No over-engineering.
