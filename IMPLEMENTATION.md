@@ -73,9 +73,9 @@ Artifacts:
 - [x] Wire into GameManager.OnPlayerCastSpell()
 - [x] Handle latency (async calls, loading states)
 - [x] Handle errors gracefully (show error, no fallback)
-- [x] Unit tests for LLMProvider module
-- [x] Integration tests for end-to-end spell generation
-- [x] Test error cases (API down, timeout, invalid response)
+- [x] Unit tests for LLMProvider module (written, require published place for DataStore)
+- [x] Integration tests for end-to-end spell generation (written, require published place for DataStore)
+- [x] Test error cases (API down, timeout, invalid response) (written, require published place for DataStore)
 - [x] Test output validation (Warding)
 
 ### Open Questions (Resolved)
