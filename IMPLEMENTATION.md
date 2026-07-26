@@ -104,7 +104,8 @@ Artifacts:
 - [x] Add Phase 4 section to IMPLEMENTATION.md
 
 ### 2. Deploy & Configure
-- [ ] Deploy web app to Vercel (manajar.app)
+- [x] Deploy web app to Vercel (https://web-app-zeta-six-27.vercel.app)
+- [ ] Configure custom domain (manajar.app)
 - [ ] Configure Google OAuth credentials (client ID + secret)
 - [ ] Configure xAI OAuth credentials (client ID)
 - [ ] Publish Roblox place (enable DataStore access)
