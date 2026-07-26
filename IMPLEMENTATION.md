@@ -106,8 +106,9 @@ Artifacts:
 ### 2. Deploy & Configure
 - [x] Deploy web app to Vercel (https://web-app-zeta-six-27.vercel.app)
 - [x] Configure custom domain (skipped — using Vercel URL for now)
-- [ ] Configure Google OAuth credentials (client ID + secret)
-- [ ] Configure xAI OAuth credentials (client ID)
+- [x] Configure Google API key (AIzaSyDbhxhSQ9EgKWbw_cekbkHgfc9WSdR40WE)
+- [x] Switch from OAuth to API key authentication (simpler, no per-user credentials)
+- [ ] Configure xAI Grok API key (if needed)
 - [ ] Publish Roblox place (enable DataStore access)
 
 ### 3. Integration Tests (TDD)
