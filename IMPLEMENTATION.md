@@ -105,7 +105,7 @@ Artifacts:
 
 ### 2. Deploy & Configure
 - [x] Deploy web app to Vercel (https://web-app-zeta-six-27.vercel.app)
-- [ ] Configure custom domain (manajar.app)
+- [x] Configure custom domain (skipped — using Vercel URL for now)
 - [ ] Configure Google OAuth credentials (client ID + secret)
 - [ ] Configure xAI OAuth credentials (client ID)
 - [ ] Publish Roblox place (enable DataStore access)
