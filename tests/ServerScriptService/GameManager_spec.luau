@@ -1,193 +1,143 @@
-local function createMockGame()
-	local mockInstances = {}
-	local mockServices = {}
+-- GameManager_spec: cast-path wiring against real modules in Studio context.
+-- The LLM provider is stubbed: external API, the only sanctioned mock target
+-- (AGENTS.md test authenticity deviation). Everything else is the real module.
 
-	local mockGame = {
-		GetService = function(_, serviceName)
-			if mockServices[serviceName] == nil then
-				local mockService = {
-					_childAddedConnections = {},
-					_childRemovedConnections = {},
-					_children = {},
+local ServerScriptService = game:GetService("ServerScriptService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-					GetChildren = function(self)
-						return self._children
-					,
+local GameManager = require(ServerScriptService:WaitForChild("GameManager"))
+local ManaJar = require(ReplicatedStorage:WaitForChild("ManaJar"))
+local Targeting = require(ReplicatedStorage:WaitForChild("Targeting"))
+local ManaScaling = require(ReplicatedStorage:WaitForChild("ManaScaling"))
 
-					FindFirstChild = function(self, name)
-						for _, child in self._children do
-							if child.Name == name then
-								return child
-							end
-						end
-						return nil
-					,
+local nextUserId = 9000
 
-					ChildAdded = function(self, cb)
-						table.insert(self._childAddedConnections, cb)
-					end,
+local function createMockPlayer()
+	nextUserId += 1
+	return { Name = "Tester" .. nextUserId, UserId = nextUserId }
+end
 
-					ChildRemoved = function(self, cb)
-						table.insert(self._childRemovedConnections, cb)
-					end,
-				}
-				mockService.Name = serviceName
-				mockServices[serviceName] = mockService
+local function baseSpell()
+	return {
+		spellName = "Test Fireball",
+		description = "A test spell",
+		effectType = "damage",
+		baseValue = 30,
+		scaledValue = 999, -- adversarial: must be overridden by ManaScaling, never passed through
+	}
+end
+
+local function createStubProvider(spellOrNil, errOrNil)
+	local calls = {}
+	return {
+		calls = calls,
+		GenerateSpell = function(userId, request)
+			table.insert(calls, { userId = userId, request = request })
+			if spellOrNil == nil then
+				return nil, errOrNil or "stub failure"
 			end
-			return mockServices[serviceName]
+			local spell = {}
+			for k, v in pairs(spellOrNil) do
+				spell[k] = v
+			end
+			return spell
 		end,
 	}
-	return mockGame, mockServices
 end
 
-local function createMockPlayer(name)
-	return {
-		Name = name,
-		UserId = tostring(name),
-		_events = {},
-	}
+local function preparedPlayer(mana)
+	local player = createMockPlayer()
+	local jar = GameManager.GetOrCreateJar(player)
+	ManaJar.FillJar(jar, mana)
+	local state = GameManager.GetOrCreateTargetingState(player)
+	Targeting.SelectTarget(state, "Training Dummy") -- resistance 10
+	return player, jar, state
 end
-
-local function createMockInstance()
-	local inst = {
-		Name = "",
-		Parent = nil,
-		_events = {},
-	}
-	return inst
-end
-
-local mockGame, mockServices = createMockGame()
-local mockReplicatedStorage = Instance.new("Folder")
-mockReplicatedStorage.Name = "ReplicatedStorage"
-mockReplicatedStorage.Parent = mockGame.GetService(mockGame, "ReplicatedStorage")
-_G.game = mockGame
-
-local ReplicatedStorage = mockGame:GetService("ReplicatedStorage")
-
-local ManaJar = {
-	CreateJar = function(_, maxMana)
-		return { mana = 0, maxMana = maxMana, targetId = nil }
-	end,
-	FillJar = function(_, jar, amount)
-		jar.mana = math.min(jar.mana + amount, jar.maxMana)
-		return true, jar.mana
-	end,
-	DrainJar = function(_, jar)
-		local drained = jar.mana
-		jar.mana = 0
-		return drained
-	end,
-}
-
-ReplicatedStorage.ManaJar = ManaJar
-
-local Targeting = {
-	CreateState = function()
-		return { availableTargets = {}, selectedTargetId = nil }
-	end,
-	RegisterTarget = function(_, state, target)
-		state.availableTargets[target.id] = target
-		return true
-	end,
-	SelectTarget = function(_, state, id)
-		state.selectedTargetId = id
-		return true
-	end,
-	GetSelectedTarget = function(_, state)
-		return state.availableTargets[state.selectedTargetId]
-	end,
-	ClearSelection = function(_, state)
-		state.selectedTargetId = nil
-	end,
-}
-
-ReplicatedStorage.Targeting = Targeting
-
-local ManaScaling = {
-	CalculateScaleFactor = function(_, mana, resistance)
-		return 1.0
-	end,
-	ScaleValue = function(_, base, factor)
-		return base * factor
-	end,
-	ClassifyScale = function(_, factor)
-		return "neutral"
-	end,
-}
-
-ReplicatedStorage.ManaScaling = ManaScaling
-
-local EffectApplier = {
-	ApplyEffect = function(_, targetId, effect)
-		return {
-			targetId = targetId,
-			effectType = effect.effectType,
-			appliedValue = effect.scaledValue,
-			success = true,
-			message = effect.spellName .. " applied",
-		}
-	end,
-}
-
-ReplicatedStorage.EffectApplier = EffectApplier
-
-local GameManager = require(game:GetService("ServerScriptService").GameManager)
 
 return function(describe, it, expect)
 	describe("GameManager.GetOrCreateJar", function()
 		it("should create a jar for a new player", function()
-			local player = createMockPlayer("TestPlayer1")
-			local jar = GameManager.GetOrCreateJar(player)
+			local jar = GameManager.GetOrCreateJar(createMockPlayer())
 			expect(jar).never.toEqual(nil)
 			expect(jar.mana).toEqual(0)
 			expect(jar.maxMana).toEqual(100)
 		end)
 
-		it("should return existing jar for known player", function()
-			local player = createMockPlayer("TestPlayer2")
+		it("should return the existing jar for a known player", function()
+			local player = createMockPlayer()
 			local jar1 = GameManager.GetOrCreateJar(player)
-			JarSystem.FillJar(jar1, 50)
+			ManaJar.FillJar(jar1, 50)
 			local jar2 = GameManager.GetOrCreateJar(player)
-			expect(jar2).toEqual(jar1)
 			expect(jar2.mana).toEqual(50)
 		end)
 	end)
 
-	describe("GameManager.MockLLMProvider", function()
-		it("should generate a spell with the given prompt", function()
-			local provider = GameManager.MockLLMProvider()
-			local spell = provider.GenerateSpell({
-				prompt = "Fireball",
-				manaInvested = 50,
-				targetName = "Dummy",
-				targetResistance = 10,
-			})
-			expect(spell).never.toEqual(nil)
-			expect(spell.spellName).toMatch("Fireball")
-			expect(spell.effectType).toEqual("damage")
-		end)
-	end)
-
-	describe("GameManager.OnPlayerCastSpell", function()
+	describe("GameManager.OnPlayerCastSpell guards", function()
 		it("should fail when no target selected", function()
-			local player = createMockPlayer("Caster1")
-			local result, err = GameManager.OnPlayerCastSpell(player, "Fireball")
+			local player = createMockPlayer()
+			local result, err = GameManager.OnPlayerCastSpell(player, "Fireball", createStubProvider(baseSpell()))
 			expect(result).toEqual(nil)
 			expect(err).toEqual("No target selected")
 		end)
 
-		end)
-
-		it("should fail when jar is empty and target is selected", function()
-			local player = createMockPlayer("Caster2")
-			local jar = GameManager.GetOrCreateJar(player)
+		it("should fail when jar is empty", function()
+			local player = createMockPlayer()
 			local state = GameManager.GetOrCreateTargetingState(player)
-			Targeting.SelectTarget(state, "training_dummy")
-			local result, err = GameManager.OnPlayerCastSpell(player, "Fireball")
+			Targeting.SelectTarget(state, "Training Dummy")
+			local result, err = GameManager.OnPlayerCastSpell(player, "Fireball", createStubProvider(baseSpell()))
 			expect(result).toEqual(nil)
 			expect(err).toEqual("Jar is empty")
 		end)
+
+		it("should propagate provider failure", function()
+			local player = preparedPlayer(20)
+			local result, err = GameManager.OnPlayerCastSpell(player, "Fireball", createStubProvider(nil, "provider down"))
+			expect(result).toEqual(nil)
+			expect(err).toEqual("provider down")
+		end)
 	end)
-end)
+
+	describe("GameManager.OnPlayerCastSpell scaling", function()
+		it("should scale the LLM base value by mana vs resistance, overriding LLM-supplied scaledValue", function()
+			local player = preparedPlayer(50)
+			local stub = createStubProvider(baseSpell())
+			local result, err = GameManager.OnPlayerCastSpell(player, "Fireball", stub)
+			expect(err).toEqual(nil)
+			expect(result).never.toEqual(nil)
+
+			-- same code path as production: ComputeSpellEffect(baseValue=30, mana=50, resistance=10)
+			local expectedFactor, expectedScaled, expectedClass = ManaScaling.ComputeSpellEffect(30, 50, 10)
+			expect(result.scaleFactor).toEqual(expectedFactor)
+			expect(result.appliedValue).toEqual(math.floor(expectedScaled))
+			expect(result.classification).toEqual(expectedClass)
+			expect(result.classification).toEqual("very_strong") -- 50/(50+10)*2 = 1.667 > 1.5
+			-- the adversarial LLM-supplied 999 must not survive
+			expect(result.appliedValue == 999).toEqual(false)
+		end)
+
+		it("should pass mana and resistance to the provider request", function()
+			local player = preparedPlayer(40)
+			local stub = createStubProvider(baseSpell())
+			GameManager.OnPlayerCastSpell(player, "Fireball", stub)
+			expect(#stub.calls).toEqual(1)
+			expect(stub.calls[1].request.manaInvested).toEqual(40)
+			expect(stub.calls[1].request.targetResistance).toEqual(10)
+		end)
+
+		it("should return a Feedback display built from the classification", function()
+			local player = preparedPlayer(50)
+			local result = GameManager.OnPlayerCastSpell(player, "Fireball", createStubProvider(baseSpell()))
+			expect(result.display).never.toEqual(nil)
+			expect(result.display.title).toMatch("Test Fireball")
+			expect(result.display.details[1]).toMatch("Scale:")
+			expect(result.display.details[2]).toMatch("Power:")
+		end)
+
+		it("should drain the jar and clear the selection after a cast", function()
+			local player, jar, state = preparedPlayer(50)
+			GameManager.OnPlayerCastSpell(player, "Fireball", createStubProvider(baseSpell()))
+			expect(jar.mana).toEqual(0)
+			expect(Targeting.GetSelectedTarget(state)).toEqual(nil)
+		end)
+	end)
 end

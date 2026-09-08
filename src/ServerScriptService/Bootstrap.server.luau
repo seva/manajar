@@ -82,6 +82,7 @@ warn("[BOOTSTRAP-SERVER] Remotes initialized")
 local GameManager = require(script.Parent.GameManager)
 local JarSystem = require(ReplicatedStorage.ManaJar)
 local Targeting = require(ReplicatedStorage.Targeting)
+local Feedback = require(ReplicatedStorage.Feedback)
 
 local remotes = ReplicatedStorage:WaitForChild("Remotes")
 
@@ -96,10 +97,12 @@ remotes.CastSpell.OnServerEvent:Connect(function(player, spellIntent)
 	end
 	local result, err = GameManager.OnPlayerCastSpell(player, spellIntent)
 	if result then
+		local jar = GameManager.GetOrCreateJar(player)
+		local jarDisplay = Feedback.BuildJarDisplay(JarSystem.GetFillRatio(jar), jar.mana, jar.maxMana)
 		remotes.UpdateJarDisplay:FireClient(player, {
-			message = "Spell cast: " .. tostring(result.effectType or "unknown") .. " (" .. tostring(result.scaledValue or 0) .. ")",
-			manaText = "0 / 100",
-			fillPercent = 0,
+			message = result.display.title .. " — " .. table.concat(result.display.details, " · "),
+			manaText = jarDisplay.manaText,
+			fillPercent = jarDisplay.fillPercent,
 		})
 	else
 		warn("Spell failed:", err)

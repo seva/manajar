@@ -20,7 +20,7 @@ A Roblox game where players put mana into jars, link them to targets, and cast L
 
 - Language: Luau (Roblox)
 - Runtime: Roblox Studio
-- Test runner (Luau): Rodeo v1.3.0 at `C:\Users\seval\bin\rodeo\rodeo.exe` — `rojo build` → `rodeo run --place <rbxlx> --mode edit --context plugin --show-return test-runner.luau`. Baseline: 11 passed, 0 failed, 2 skipped (GameManager_spec, SetupRemotes_spec — skipped by design, documented in `test-runner.luau`)
+- Test runner (Luau): Rodeo v1.3.0 at `C:\Users\seval\bin\rodeo\rodeo.exe` — `rojo build` → `rodeo run --place <rbxlx> --mode edit --context plugin --show-return test-runner.luau`. Baseline: 12 passed, 0 failed, 1 skipped (SetupRemotes_spec — monkey-patches Instance.new, read-only in Studio; documented in `test-runner.luau`)
 - Test runner (web app): Jest — `npm test` in `web-app/`
 - Formatting / linting: Standard Roblox Luau style
 - AI Coding Agent (Steward): OpenCode

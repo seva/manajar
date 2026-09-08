@@ -3,7 +3,19 @@ local HttpService = game:GetService("HttpService")
 
 local CredentialStore = {}
 
-local credentialsStore = DataStoreService:GetDataStore("PlayerLLMCredentials")
+local credentialsStore = nil
+
+local function getStore()
+	if credentialsStore == nil then
+		local ok, store = pcall(function()
+			return DataStoreService:GetDataStore("PlayerLLMCredentials")
+		end)
+		if ok then
+			credentialsStore = store
+		end
+	end
+	return credentialsStore
+end
 
 local CACHE_TTL = 300 -- 5 minutes
 
@@ -31,7 +43,7 @@ function CredentialStore.GetCredentials(userId: number)
 	end
 
 	local success, result = pcall(function()
-		return credentialsStore:GetAsync("Player_" .. userId)
+		return getStore():GetAsync("Player_" .. userId)
 	end)
 
 	if success and result then
@@ -54,7 +66,7 @@ function CredentialStore.SaveCredentials(userId: number, credentials)
 	}
 
 	local success, err = pcall(function()
-		credentialsStore:SetAsync("Player_" .. userId, data)
+		getStore():SetAsync("Player_" .. userId, data)
 	end)
 
 	if success then
@@ -68,7 +80,7 @@ end
 
 function CredentialStore.DeleteCredentials(userId: number)
 	local success, err = pcall(function()
-		credentialsStore:RemoveAsync("Player_" .. userId)
+		getStore():RemoveAsync("Player_" .. userId)
 	end)
 
 	if success then

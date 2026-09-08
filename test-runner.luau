@@ -11,7 +11,6 @@ end
 
 local SKIP_TESTS = {
 	["SetupRemotes_spec"] = "monkey-patches Instance.new (read-only in Studio)",
-	["GameManager_spec"] = "syntax errors + _G.game mock incompatible with Studio",
 }
 
 local function runTestFile(testModule)

@@ -5,6 +5,7 @@ local JarSystem = require(ReplicatedStorage.ManaJar)
 local Targeting = require(ReplicatedStorage.Targeting)
 local ManaScaling = require(ReplicatedStorage.ManaScaling)
 local EffectApplier = require(ReplicatedStorage.EffectApplier)
+local Feedback = require(ReplicatedStorage.Feedback)
 local LLMProvider = require(script.Parent.LLMProvider)
 
 local playerJars = {}
@@ -28,7 +29,8 @@ local function GetOrCreateTargetingState(player)
 	return targetingStates[player]
 end
 
-local function OnPlayerCastSpell(player, spellIntent)
+local function OnPlayerCastSpell(player, spellIntent, provider)
+	local spellProvider = provider or LLMProvider
 	local jar = GetOrCreateJar(player)
 	local targetingState = GetOrCreateTargetingState(player)
 	local target = Targeting.GetSelectedTarget(targetingState)
@@ -45,13 +47,26 @@ local function OnPlayerCastSpell(player, spellIntent)
 		targetName = target.name,
 		targetResistance = target.resistance,
 	}
-	local spell, err = LLMProvider.GenerateSpell(player.UserId, request)
+	local spell, err = spellProvider.GenerateSpell(player.UserId, request)
 	if spell == nil then
 		return nil, err or "Spell generation failed"
 	end
-	local result = EffectApplier.ApplyEffect(target.id, spell)
+	local scaleFactor, scaledValue, classification = ManaScaling.ComputeSpellEffect(spell.baseValue, mana, target.resistance)
+	spell.scaledValue = scaledValue
+	local effectResult = EffectApplier.ApplyEffect(target.id, spell)
+	local display = Feedback.BuildSpellResultDisplay(spell.spellName, classification, scaleFactor, scaledValue)
 	Targeting.ClearSelection(targetingState)
-	return result, nil
+	return {
+		targetId = effectResult.targetId,
+		effectType = effectResult.effectType,
+		appliedValue = effectResult.appliedValue,
+		duration = effectResult.duration,
+		success = effectResult.success,
+		message = effectResult.message,
+		scaleFactor = scaleFactor,
+		classification = classification,
+		display = display,
+	}, nil
 end
 
 Players.PlayerAdded:Connect(function(player)

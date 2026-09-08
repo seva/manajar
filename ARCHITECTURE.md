@@ -109,7 +109,7 @@ tests/
 
 _Flow: Player authenticates via web app → credentials stored in DataStore → LLMProvider retrieves credentials → calls LLM API → generates spell effect_
 
-_Last verified: 2026-07-20_
+_Last verified: 2026-09-08_
 
 ---
 
@@ -126,10 +126,11 @@ _Last verified: 2026-07-20_
 | EffectApplier | Apply scaled effect to target | ApplyEffect(targetId, effect) |
 | Feedback | Build display data for UI | BuildSpellResultDisplay, BuildJarDisplay |
 | ClientHandler | Client-side input handling and remote dispatch | Create, StartFill, StopFill, CastSpell, SelectTarget, OnUpdateJar |
+| GameManager | Server game loop wiring; cast path computes scaling via ManaScaling and display via Feedback | GetOrCreateJar, GetOrCreateTargetingState, OnPlayerCastSpell(player, spellIntent, provider?) → (castResult, err?); castResult = EffectResult fields + scaleFactor + classification + display |
 | LLMProvider | Manage LLM API calls with OAuth credentials | GenerateSpell(userId, request), GetProviderInfo, DisconnectProvider |
 | CredentialStore | Store and retrieve OAuth credentials in DataStore | SaveCredentials, GetCredentials, DeleteCredentials, RefreshCredentials, IsTokenExpired |
 
-_Last verified: 2026-07-20_
+_Last verified: 2026-09-08_
 
 ---
 
@@ -147,7 +148,7 @@ _Last verified: 2026-07-20_
 | Credential storage | Roblox DataStore | Server-side only, encrypted at rest, per-user isolation |
 | Web app hosting | Vercel (manajar.app) | Free tier, serverless functions, easy OAuth callback |
 
-_Last verified: 2026-07-20_
+_Last verified: 2026-09-08_
 
 ---
 
@@ -159,4 +160,4 @@ _Last verified: 2026-07-20_
 - Players must provide their own LLM credentials (BYO OAuth)
 - OAuth credentials stored server-side only (DataStore)
 
-_Last verified: 2026-07-20_
+_Last verified: 2026-09-08_
