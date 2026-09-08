@@ -21,10 +21,8 @@ local function checkRateLimit(userId: number)
 	return true
 end
 
-local API_KEY = "AIzaSyDbhxhSQ9EgKWbw_cekbkHgfc9WSdR40WE"
-
-local function callGeminiAPI(prompt: string, systemPrompt: string)
-	local url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" .. API_KEY
+local function callGeminiAPI(accessToken: string, prompt: string, systemPrompt: string)
+	local url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
 
 	local body = {
 		contents = {
@@ -43,6 +41,7 @@ local function callGeminiAPI(prompt: string, systemPrompt: string)
 	}
 
 	local headers = {
+		["Authorization"] = "Bearer " .. accessToken,
 		["Content-Type"] = "application/json"
 	}
 
@@ -123,10 +122,32 @@ function LLMProvider.GenerateSpell(userId: number, request)
 		return nil, rateLimitErr
 	end
 
+	local credentials = CredentialStore.GetCredentials(userId)
+	if not credentials then
+		return nil, "No LLM provider connected. Please connect a provider first."
+	end
+
+	if CredentialStore.IsTokenExpired(credentials) then
+		local refreshSuccess, refreshErr = CredentialStore.RefreshCredentials(userId)
+		if not refreshSuccess then
+			return nil, "Authentication expired: " .. tostring(refreshErr) .. ". Please reconnect your provider."
+		end
+		credentials = CredentialStore.GetCredentials(userId)
+	end
+
 	local prompt = SpellCaster.BuildPrompt(request)
 	local systemPrompt = SpellCaster.GetSystemPrompt()
 
-	local responseText, apiResult = callGeminiAPI(prompt, systemPrompt)
+	local responseText
+	local apiSuccess, apiResult
+
+	if credentials.provider == "gemini" then
+		responseText, apiResult = callGeminiAPI(credentials.accessToken, prompt, systemPrompt)
+	elseif credentials.provider == "grok" then
+		responseText, apiResult = callGrokAPI(credentials.accessToken, prompt, systemPrompt)
+	else
+		return nil, "Unknown provider: " .. tostring(credentials.provider)
+	end
 
 	if not responseText then
 		return nil, apiResult

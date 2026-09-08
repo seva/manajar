@@ -106,10 +106,11 @@ Artifacts:
 ### 2. Deploy & Configure
 - [x] Deploy web app to Vercel (https://web-app-zeta-six-27.vercel.app)
 - [x] Configure custom domain (skipped — using Vercel URL for now)
-- [x] Configure Google API key (AIzaSyDbhxhSQ9EgKWbw_cekbkHgfc9WSdR40WE)
-- [x] Switch from OAuth to API key authentication (simpler, no per-user credentials)
-- [ ] Configure xAI Grok API key (if needed)
+- [ ] Configure Google OAuth client (redirect URI → Vercel gemini.ts callback)
+- [ ] Configure xAI Grok OAuth (device code flow)
 - [ ] Publish Roblox place (enable DataStore access)
+
+_Note (2026-09-08): the 2026-07-26 switch from BYO OAuth to a game-side Google API key (29c473c) was unauthorized agent drift — it contradicted the ARCHITECTURE.md constraint "Players must provide their own LLM credentials (BYO OAuth)" and exposed a key in a public repo. Reverted. The exposed key must be rotated in Google Cloud Console._
 
 ### 3. Integration Tests (TDD)
 - [ ] Write integration test: Gemini OAuth end-to-end flow
