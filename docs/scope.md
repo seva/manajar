@@ -10,9 +10,9 @@ Established 2026-09-08 (scaffold port #6; draft for Owner review). Strategy arti
 
 | Level | Scope | Current system's contribution |
 |---|---|---|
-| L1 | Core loop verified headless (jar → mana → target → LLM spell → scaling → feedback) | as-is: 12-test suite green (Rodeo/Studio); cast-path scaling wired and covered (#7) |
+| L1 | Core loop verified headless (jar → mana → target → LLM spell → scaling → feedback) | as-is: 87 assertion tests green (12 spec files, Rodeo/Studio; runner fails on any assertion failure, mutation-checked 2026-09-08); cast-path scaling wired and covered (#7, #9) |
 | L2 | Published Roblox place with end-to-end BYO-LLM casting (Phase 4 gate) | code written, **unexecuted**: CredentialStore ships OAuth client placeholders; nothing has run against real OAuth or a real DataStore |
-| L3 | Public playable game: onboarding, visual spell feedback, content moderation of AI output | Warding hardened against adversarial LLM output; tutorial |
+| L3 | Public playable game: onboarding, visual spell feedback, content moderation of AI output | planned, not built — Warding exists but is not adversarially hardened; tutorial unchecked (IMPLEMENTATION.md §5) |
 | L4 | Reusable open-source framework: BYO-LLM mechanics for other Roblox games | provider dispatch is internal to LLMProvider (hardcoded gemini/grok branches); provider-agnostic abstraction planned, not built. OAuth web app as reference implementation |
 | L5 | Universal for the domain: player-owned AI credentials as a commonplace mechanic substrate across UGC platforms | the pattern, not the code: BYO credentials + sanitized generation + deterministic scaling. Measured by ecosystem adoption — outside project jurisdiction; Owner-level rung |
 

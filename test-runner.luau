@@ -44,8 +44,8 @@ end
 local tests = findTests(testsFolder)
 print(string.format("Found %d test files", #tests))
 
-local passed = 0
-local failed = 0
+local filesPassed = 0
+local filesFailed = 0
 local skipped = 0
 
 for _, test in tests do
@@ -55,14 +55,31 @@ for _, test in tests do
 	else
 		local success, err = pcall(runTestFile, test)
 		if success then
-			passed = passed + 1
+			filesPassed = filesPassed + 1
 			print("PASS:", test.Name)
 		else
-			failed = failed + 1
+			filesFailed = filesFailed + 1
 			warn("FAIL:", test.Name, "-", err)
 		end
 	end
 end
 
-print(string.format("\nResults: %d passed, %d failed, %d skipped", passed, failed, skipped))
-return { passed = passed, failed = failed, skipped = skipped }
+-- Assertion-level results: it() catches failures internally; a file "PASS"
+-- above only proves it loaded. The suite fails if ANY assertion failed.
+local results = TestFramework.getResults()
+for _, e in ipairs(results.errors) do
+	warn("FAILED ASSERTION:", e)
+end
+
+print(string.format("\nFiles: %d loaded, %d failed to load, %d skipped", filesPassed, filesFailed, skipped))
+print(string.format("Tests: %d passed, %d failed", results.passed, results.failed))
+
+local totalFailed = filesFailed + results.failed
+print(string.format("Results: %d passed, %d failed, %d skipped", filesPassed, totalFailed, skipped))
+return {
+	passed = filesPassed,
+	failed = totalFailed,
+	skipped = skipped,
+	testsPassed = results.passed,
+	testsFailed = results.failed,
+}

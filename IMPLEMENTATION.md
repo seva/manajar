@@ -141,4 +141,4 @@ _Note (2026-09-08): the 2026-07-26 switch from BYO OAuth to a game-side Google A
 ### Verification Statement
 **Phase 4 is complete when:** Players can authenticate with real OAuth providers, cast spells that generate real LLM effects, and see visual feedback — all from a published Roblox place.
 
-_Last updated: 2026-07-20_
+_Last updated: 2026-09-08_

@@ -34,7 +34,7 @@ Enforced at audit (METHODOLOGY.md Post-Phase Audit, item 5). Deviations must be 
 
 **Indirection cap** - at most three hops within a feature domain: handler → domain rule → persistence. Abstractions generalize only after the same logic occurs at ≥3 production call-sites (Rule of Three).
 
-_Applicability deviations declared in `AGENTS.md` (no ORM; DataStore key versioning; RemoteEvent idempotency)._
+_Applicability deviations and open gaps declared in `AGENTS.md` (no ORM — N/A; DataStore key versioning and RemoteEvent idempotency — REQUIRED, NOT IMPLEMENTED, tracked in IMPLEMENTATION.md Phase 4 §6)._
 
 ---
 
