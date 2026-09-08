@@ -73,7 +73,7 @@ Artifacts:
 - [x] Wire into GameManager.OnPlayerCastSpell()
 - [x] Handle latency (async calls, loading states)
 - [x] Handle errors gracefully (show error, no fallback)
-- [x] Unit tests for LLMProvider module (written, require published place for DataStore)
+- [x] Unit tests for LLMProvider module (**overstated at the time**: init_spec/CredentialStore_spec were doc-only placeholders asserting nothing — replacement tracked in Phase 4 §6; real-credential paths require published place)
 - [x] Integration tests for end-to-end spell generation (written, require published place for DataStore)
 - [x] Test error cases (API down, timeout, invalid response) (written, require published place for DataStore)
 - [x] Test output validation (Warding)
@@ -129,6 +129,14 @@ _Note (2026-09-08): the 2026-07-26 switch from BYO OAuth to a game-side Google A
 - [ ] Write tests for tutorial/onboarding
 - [ ] Implement tutorial/onboarding
 - [ ] Improve error messages
+
+### 6. Hardening (Critic audit 2026-09-08, #8)
+- [ ] Write tests: CastSpell idempotency-key dedupe (duplicate remote fire drains mana once)
+- [ ] Implement idempotency guard for RemoteEvent mutations (CastSpell mana drain)
+- [ ] Write tests: credential schema versioning (version field round-trip, legacy key handling)
+- [ ] Add version field to credential DataStore schema (Expand → Contract)
+- [ ] Move OAuth client_secret out of the distributed place (RefreshCredentials redesign: token refresh via web-app, not embedded secret — terminal-bound constraint in docs/scope.md)
+- [ ] Replace placeholder specs (init_spec, CredentialStore_spec) with real assertions runnable in Studio context
 
 ### Verification Statement
 **Phase 4 is complete when:** Players can authenticate with real OAuth providers, cast spells that generate real LLM effects, and see visual feedback — all from a published Roblox place.

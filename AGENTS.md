@@ -28,7 +28,7 @@ A Roblox game where players put mana into jars, link them to targets, and cast L
 - Project focus: Simple, kid-friendly core loop first. No over-engineering.
 - Scope position per `docs/scope.md`: **L1** (core loop verified headless); next rung L2 (published place, end-to-end BYO-LLM casting)
 - Refinement level: PRAROC-2 (Now → Later) for dev steps — all commitments recoverable; PRAROC-3 (Now → Far → Unreachable) for publish-facing commitments (place publication, OAuth consent screen, domain) which spend reputation/account standing
-- Role instances (`ROLES.md`): **Owner** = Seva Lapsha (@seva); **Steward** = OpenCode session; **Critic** = distinct-model session (Grok or Gemini via OpenCode, fresh context — never the Steward session); **Auditor** = MetaThrone (Claude Code session)
+- Role instances (`ROLES.md`): **Owner** = Seva Lapsha (@seva); **Steward** = OpenCode desktop session, model pinned: alibaba/qwen3.8-max; **Critic** = fresh-context instance distinct from the Steward — subagent or distinct-model session (Owner-sanctioned instantiations: Task subagent 2026-09-08; distinct-model CLI session when available); **Auditor** = MetaThrone (Claude Code session)
 
 ## Declared Deviations
 
@@ -47,5 +47,5 @@ A Roblox game where players put mana into jars, link them to targets, and cast L
   - Verification evidence: screenshot + Output text, committed to the issue comment
   - Cadence: at phase boundaries, not per-commit; phase verification requires at least one headed run
   - Known failure mode: "Studio process exited during launch" = pending forced Studio update; launch `RobloxStudioBeta.exe` manually, let `RobloxStudioInstaller` finish, retry
-- **ARCHITECTURE.md Engineering Invariants — partial applicability**: no ORM (Banned Pattern row 1 N/A); schema evolution = DataStore key versioning (Expand→Contract applies to credential schema); idempotency guards apply to RemoteEvent handlers (server-side dedupe of client retries)
+- **ARCHITECTURE.md Engineering Invariants — partial applicability**: no ORM (Banned Pattern row 1 N/A). **Open gaps, not satisfied invariants** (Critic audit 2026-09-08, tracked in IMPLEMENTATION.md Phase 4 §6): idempotency guards are *required* for RemoteEvent handlers but **not implemented** (CastSpell drains mana per invocation, no dedupe); credential-schema versioning is *required* but **not implemented** (bare `Player_<id>` DataStore keys, no version field)
 - **Test authenticity deviation**: Roblox service dependencies (DataStore, HttpService) cannot run in ephemeral containers; Studio-context tests skip DataStore paths (documented in test-runner.luau) and are covered by integration tests on the published place (Phase 4 §3). Mocks remain restricted to external LLM APIs.

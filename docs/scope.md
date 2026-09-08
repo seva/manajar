@@ -10,11 +10,11 @@ Established 2026-09-08 (scaffold port #6; draft for Owner review). Strategy arti
 
 | Level | Scope | Current system's contribution |
 |---|---|---|
-| L1 | Core loop verified headless (jar → mana → target → LLM spell → scaling → feedback) | as-is: 11-test suite green, all 7 components implemented |
-| L2 | Published Roblox place with end-to-end BYO-LLM casting (Phase 4 gate) | LLMProvider/CredentialStore live against real Gemini/Grok OAuth; DataStore persistence |
+| L1 | Core loop verified headless (jar → mana → target → LLM spell → scaling → feedback) | as-is: 12-test suite green (Rodeo/Studio); cast-path scaling wired and covered (#7) |
+| L2 | Published Roblox place with end-to-end BYO-LLM casting (Phase 4 gate) | code written, **unexecuted**: CredentialStore ships OAuth client placeholders; nothing has run against real OAuth or a real DataStore |
 | L3 | Public playable game: onboarding, visual spell feedback, content moderation of AI output | Warding hardened against adversarial LLM output; tutorial |
-| L4 | Reusable open-source framework: BYO-LLM mechanics for other Roblox games | Provider-agnostic LLMProvider interface, OAuth web app as reference implementation |
-| L5 | Universal for the domain: player-owned AI credentials as a commonplace mechanic substrate across UGC platforms | The pattern, not the code: BYO credentials + sanitized generation + deterministic scaling |
+| L4 | Reusable open-source framework: BYO-LLM mechanics for other Roblox games | provider dispatch is internal to LLMProvider (hardcoded gemini/grok branches); provider-agnostic abstraction planned, not built. OAuth web app as reference implementation |
+| L5 | Universal for the domain: player-owned AI credentials as a commonplace mechanic substrate across UGC platforms | the pattern, not the code: BYO credentials + sanitized generation + deterministic scaling. Measured by ecosystem adoption — outside project jurisdiction; Owner-level rung |
 
 ---
 
@@ -36,6 +36,8 @@ Established 2026-09-08 (scaffold port #6; draft for Owner review). Strategy arti
 | Compiled constraint | Irrecoverable margin it protects |
 |---|---|
 | Never store or ship game-side LLM API keys | Owner's accounts/billing standing with Google/xAI; project's BYO promise |
+| Never ship OAuth client secrets inside the distributed place file (known design gap: CredentialStore.RefreshCredentials currently embeds client_id/client_secret — must move server-side/web-app before publish) | Same margin class: Owner's Google/xAI account standing |
+| Never collect or store children's credentials or personal data beyond the strict minimum for BYO OAuth; COPPA/FTC review before publication | Legal standing, Owner reputation, Roblox publisher account |
 | Never publish AI-generated content path without Warding active | Child safety; Owner/Roblox account standing |
 | Never trade Roblox ToS compliance for release speed | Publisher account (irrecoverable if banned) |
 | OAuth consent screen / domain registration: no misleading branding, no scope over-request | Google developer account standing |
@@ -45,6 +47,10 @@ Established 2026-09-08 (scaffold port #6; draft for Owner review). Strategy arti
 | Dev steps (code, tests, docs) | PRAROC-2 (Now → Later) — fully recoverable | Roblox Studio/Rojo toolchain availability; Rodeo compatibility |
 | Publish-facing (place publication, OAuth consent screen, domain, Vercel project) | PRAROC-3 (Now → Far → Unreachable) — spends reputation/account standing | Vercel free-tier availability; manajar.app domain renewal |
 | Platform dependency (Roblox itself) | assumed non-drifting within the commitment interval | Roblox platform continuity; Luau language stability |
+
+Tracked drifting terms (fastest drift × consequence, per HORIZONS.md — these are NOT below the cut):
+- **Roblox AI-generated-content policy** — drifts toward restriction; consequence at L2+: place removal. Named as survivability risk above; checked every Orient against the publish-facing commitment.
+- **Google OAuth app-verification requirements** — drifts; gates L1→L2 (unverified consent screen → limited/test-user-only OAuth). Checked every Orient.
 
 ## Terminal form
 
